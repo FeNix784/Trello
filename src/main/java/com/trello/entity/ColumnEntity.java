@@ -9,6 +9,9 @@ import java.util.List;
 @Entity
 public class ColumnEntity extends PanacheEntity {
 
+
     @OneToMany
     public List<TaskEntity> tasks;
+
+    public String title;
 }

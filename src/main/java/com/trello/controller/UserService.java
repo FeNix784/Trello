@@ -1,4 +1,4 @@
-package com.trello.service;
+package com.trello.controller;
 
 import com.trello.entity.UserEntity;
 

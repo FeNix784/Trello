@@ -1,7 +1,9 @@
-package com.trello.service;
+package com.trello.controller;
 
 import com.trello.entity.BoardEntity;
+import com.trello.entity.Role;
 import com.trello.entity.UserEntity;
+import com.trello.entity.UsersRolesEntity;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -11,6 +13,7 @@ import java.net.URI;
 
 @Path("/{userID}/boards")
 public class BoardService {
+
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -24,6 +27,8 @@ public class BoardService {
         }
     }
 
+
+
     @POST
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
@@ -35,11 +40,27 @@ public class BoardService {
             if (user == null) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
+            UsersRolesEntity usersRoles = new UsersRolesEntity(user, Role.CREATOR);
+            UsersRolesEntity.persist(usersRoles);
+            if(!usersRoles.isPersistent()) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+            board.usersRoles.add(usersRoles);
             user.boards.add(board);
             return Response.created(URI.create("/"+ userID + "/boards/" + board.id)).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
+
+
+
+
+
+
+
+
+
+
 
     @Path("/{id}")
     @GET
