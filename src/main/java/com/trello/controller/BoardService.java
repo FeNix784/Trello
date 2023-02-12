@@ -10,10 +10,11 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("/{userID}/boards")
 public class BoardService {
-
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -27,8 +28,6 @@ public class BoardService {
         }
     }
 
-
-
     @POST
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
@@ -40,27 +39,12 @@ public class BoardService {
             if (user == null) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
-            UsersRolesEntity usersRoles = new UsersRolesEntity(user, Role.CREATOR);
-            UsersRolesEntity.persist(usersRoles);
-            if(!usersRoles.isPersistent()) {
-                return Response.status(Response.Status.BAD_REQUEST).build();
-            }
-            board.usersRoles.add(usersRoles);
+            board.users.add(user);
             user.boards.add(board);
             return Response.created(URI.create("/"+ userID + "/boards/" + board.id)).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
-
-
-
-
-
-
-
-
-
-
 
     @Path("/{id}")
     @GET

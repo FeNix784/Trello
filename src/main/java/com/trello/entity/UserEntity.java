@@ -1,13 +1,15 @@
 package com.trello.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import java.util.List;
 
 @Entity
+@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class UserEntity extends PanacheEntity {
 
     public String login;
@@ -19,7 +21,4 @@ public class UserEntity extends PanacheEntity {
     public String name;
     public String surname;
 
-
-    @OneToMany
-    public List<BoardEntity> boards;
 }

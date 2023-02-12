@@ -1,14 +1,11 @@
 package com.trello.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -18,11 +15,9 @@ import javax.persistence.ManyToOne;
 public class UsersRolesEntity extends PanacheEntity {
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     public UserEntity user;
 
     public Role role;
-
-
 
 }
