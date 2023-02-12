@@ -21,10 +21,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class UsersBoardsRolesService {
 
-
-
-
-
     public static Response create(UserEntity user, BoardEntity board, Role role){
         UsersBoardsRolesEntity ubr = new UsersBoardsRolesEntity(user,board,role);
         UsersBoardsRolesEntity.persist(ubr);

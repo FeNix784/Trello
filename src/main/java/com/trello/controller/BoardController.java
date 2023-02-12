@@ -21,15 +21,11 @@ public class BoardController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getByUserID(@PathParam("userID") Long userID){
-
-        List<BoardEntity> listBoards =  UsersBoardsRolesEntity.getBoardsByUserId(userID);
-        System.out.println(Arrays.toString(listBoards.toArray()));
-        if (listBoards == null)
+    public Response getByUserID(@PathParam("userID") Long userID) {
+        List<BoardEntity> listBoards = UsersBoardsRolesEntity.getBoardsByUserId(userID);
+        if (listBoards.isEmpty())
             return Response.status(Response.Status.NOT_FOUND).build();
-
         return Response.ok(listBoards).build();
-
     }
 
 
@@ -37,14 +33,15 @@ public class BoardController {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(BoardEntity board, @PathParam("userID") Long userID){
+    public Response create(BoardEntity board, @PathParam("userID") Long userID) {
         BoardEntity.persist(board);
-        if(board.isPersistent()){
+        if (board.isPersistent()) {
             UserEntity user = UserEntity.findById(userID);
             if (user == null) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
-            return UsersBoardsRolesService.create(user,board, Role.CREATOR);
+            return UsersBoardsRolesService.create(user, board, Role.CREATOR);
+
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -52,7 +49,7 @@ public class BoardController {
     @Path("/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getById(@PathParam("id") Long id){
+    public Response getById(@PathParam("id") Long id) {
         return BoardEntity.findByIdOptional(id)
                 .map(board -> Response.ok(board).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).build());

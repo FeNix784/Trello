@@ -14,7 +14,7 @@ public class UserEntity extends PanacheEntity {
 
     public String login;
 
-    // TODO: encrypt && field limitation 12.02.2023
+    //TODO: encrypt && field limitation 12.02.2023
 
     public String password;
 
