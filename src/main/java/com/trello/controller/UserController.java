@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.List;
 
 @Path("/users")
-public class UserService {
+public class UserController {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
