@@ -1,7 +1,6 @@
-package ru.fenix784.entity;
+package com.trello.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import ru.fenix784.entity.BoardEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;

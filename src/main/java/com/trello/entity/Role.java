@@ -1,4 +1,4 @@
-package ru.fenix784.entity;
+package com.trello.entity;
 
 public enum Role {
 

@@ -1,6 +1,6 @@
-package ru.fenix784.service;
+package com.trello.service;
 
-import ru.fenix784.entity.UserEntity;
+import com.trello.entity.UserEntity;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
