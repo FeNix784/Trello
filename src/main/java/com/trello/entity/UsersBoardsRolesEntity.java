@@ -1,8 +1,6 @@
 package com.trello.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import io.quarkus.panache.common.Sort;
-import io.vertx.mutiny.ext.auth.User;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 

@@ -14,4 +14,6 @@ public class ColumnEntity extends PanacheEntity {
     public List<TaskEntity> tasks;
 
     public String title;
+
+
 }
