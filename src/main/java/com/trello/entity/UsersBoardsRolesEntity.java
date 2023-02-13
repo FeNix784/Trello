@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 public class UsersBoardsRolesEntity extends PanacheEntity {
 
@@ -22,6 +21,11 @@ public class UsersBoardsRolesEntity extends PanacheEntity {
 
     public Role role;
 
+    public UsersBoardsRolesEntity(UserEntity user, BoardEntity board, Role role) {
+        this.user = user;
+        this.board = board;
+        this.role = role;
+    }
 
     public static List<BoardEntity>  getBoardsByUserId(Long userID){
         List<UsersBoardsRolesEntity> ubrList = list("user_id",userID);
