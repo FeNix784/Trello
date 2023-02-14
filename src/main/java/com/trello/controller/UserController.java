@@ -10,20 +10,19 @@ import java.net.URI;
 import java.util.List;
 
 @Path("/users")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class UserController {
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(){
+    public Response getAllUsers(){
         List<UserEntity> users = UserEntity.listAll();
         return Response.ok(users).build();
     }
 
     @POST
     @Transactional
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(UserEntity person){
+    public Response createUser(UserEntity person){
         UserEntity.persist(person);
         if(person.isPersistent()){
             return Response.created(URI.create("/users/" + person.id)).build();
@@ -31,10 +30,10 @@ public class UserController {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    @Path("/{id}")
     @GET
+    @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getById(@PathParam("id") Long id){
+    public Response getUserById(@PathParam("id") Long id){
         return UserEntity.findByIdOptional(id)
                 .map(person -> Response.ok(person).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).build());

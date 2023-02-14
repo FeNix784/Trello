@@ -11,12 +11,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 
-@Path("/{userID}/boards/{boardId}")
+@Path("/{userID}/boards/{boardId}/columns")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class ColumnController {
+
     @POST
     @Transactional
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response createColumn(ColumnEntity column, @PathParam("boardId") Long boardId, @PathParam("userID") Long userId){
         ColumnEntity.persist(column);
         if(column.isPersistent()){
@@ -31,11 +32,9 @@ public class ColumnController {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    @Path("/columns/{columnId}")
     @POST
+    @Path("{columnId}")
     @Transactional
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response createTask(TaskEntity task, @PathParam("columnId") Long columnId){
         TaskEntity.persist(task);
         if(task.isPersistent()){

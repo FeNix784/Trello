@@ -7,17 +7,16 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
 import java.util.List;
 
 @Path("/{userID}/boards")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class BoardController {
 
     @POST
     @Transactional
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(BoardEntity board, @PathParam("userID") Long userID) {
+    public Response createBoard(BoardEntity board, @PathParam("userID") Long userID) {
         BoardEntity.persist(board);
         if (board.isPersistent()) {
             UserEntity user = UserEntity.findById(userID);
@@ -29,9 +28,9 @@ public class BoardController {
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
+
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getByUserID(@PathParam("userID") Long userID) {
+    public Response getBoardsByUserID(@PathParam("userID") Long userID) {
         List<BoardEntity> listBoards = UsersBoardsRolesEntity.getBoardsByUserId(userID);
         if (listBoards.isEmpty())
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -39,33 +38,25 @@ public class BoardController {
     }
 
 
-    @Path("/{boardId}")
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-
-    public Response getById(@PathParam("boardId")Long boardId){
+    @Path("{boardId}")
+    public Response getBoardById(@PathParam("boardId")Long boardId) {
         return BoardEntity.findByIdOptional(boardId)
                 .map(board -> Response.ok(board).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).build());
 
     }
 
-    @Path("/{boardId}")
-    @POST
+    @PUT
+    @Path("{boardId}")
     @Transactional
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response createColumn(ColumnEntity column, @PathParam("boardId") Long boardId, @PathParam("userID") Long userId){
-        ColumnEntity.persist(column);
-        if(column.isPersistent()){
-            BoardEntity board = BoardEntity.findById(boardId);
-            if (board == null) {
-                return Response.status(Response.Status.BAD_REQUEST).build();
-            }
-            board.columns.add(column);
-            return Response.created(URI.create("/"+ userId + "/boards/" + boardId)).build();
-
+    public Response updateBoard(BoardEntity board, @PathParam("boardId")Long boardId) {
+        BoardEntity entity = BoardEntity.findById(boardId);
+        if (entity == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
-        return Response.status(Response.Status.BAD_REQUEST).build();
+        entity.title = board.title;
+        return Response.ok(Response.Status.OK).build();
     }
+
 }
