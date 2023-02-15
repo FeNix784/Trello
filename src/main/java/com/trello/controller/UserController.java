@@ -7,6 +7,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.sql.PreparedStatement;
 import java.util.List;
 
 @Path("/users")
@@ -38,5 +39,24 @@ public class UserController {
                 .map(person -> Response.ok(person).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).build());
 
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response deleteUserById(@PathParam("id") Long id){
+        if(UserEntity.deleteById(id)){
+            return Response.status(Response.Status.OK).build();
+        }return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+
+    @PUT
+    @Path("{id}")
+    @Transactional
+    public Response updateUserById(@PathParam("id") Long id){
+        if(UserEntity.update("id",id)==1){
+            return Response.status(Response.Status.OK).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 }

@@ -17,6 +17,7 @@ public class BoardController {
     @POST
     @Transactional
     public Response createBoard(BoardEntity board, @PathParam("userID") Long userID) {
+
         BoardEntity.persist(board);
         if (board.isPersistent()) {
             UserEntity user = UserEntity.findById(userID);
