@@ -24,7 +24,7 @@ public class TaskController {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
             column.tasks.add(task);
-            return Response.created(URI.create("/columns")).build();
+            return Response.ok(task).build();
 
         }
         return Response.status(Response.Status.BAD_REQUEST).build();

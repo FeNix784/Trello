@@ -15,5 +15,4 @@ public class ColumnEntity extends PanacheEntity {
 
     public String title;
 
-
 }
