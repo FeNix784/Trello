@@ -24,7 +24,6 @@ public class BoardController {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
             return UsersBoardsRolesService.create(user, board, Role.CREATOR);
-
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
