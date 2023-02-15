@@ -44,8 +44,8 @@ public class UserController {
     @Path("{id}")
     @Transactional
     public Response deleteUserById(@PathParam("id") Long id){
-        List<UsersBoardsRolesEntity> urb = UsersBoardsRolesEntity.list("user_id",id);
-        urb.forEach(record->{record.board.delete();record.user.delete();});
+        List<UsersBoardsRolesEntity> urb = UsersBoardsRolesEntity.list("user_id = ?1 and role = 0", id);
+        urb.forEach(record->{record.delete(); record.board.delete();});
         if(UserEntity.deleteById(id)){
             return Response.status(Response.Status.OK).build();
         }return Response.status(Response.Status.NOT_FOUND).build();
