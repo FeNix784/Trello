@@ -19,4 +19,6 @@ public class BoardEntity extends PanacheEntity {
     @OneToMany
     public List<ColumnEntity> columns = new CopyOnWriteArrayList<>();
 
+
+
 }

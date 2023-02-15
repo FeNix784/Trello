@@ -9,18 +9,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/{userID}/boards")
+@Path("/{userId}/boards")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class BoardController {
 
     @POST
     @Transactional
-    public Response createBoard(BoardEntity board, @PathParam("userID") Long userID) {
+    public Response createBoard(BoardEntity board, @PathParam("userId") Long userId) {
 
         BoardEntity.persist(board);
         if (board.isPersistent()) {
-            UserEntity user = UserEntity.findById(userID);
+            UserEntity user = UserEntity.findById(userId);
             if (user == null) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
@@ -30,8 +30,8 @@ public class BoardController {
     }
 
     @GET
-    public Response getBoardsByUserID(@PathParam("userID") Long userID) {
-        List<BoardEntity> listBoards = UsersBoardsRolesEntity.getBoardsByUserId(userID);
+    public Response getBoardsByUserID(@PathParam("userId") Long userId) {
+        List<BoardEntity> listBoards = UsersBoardsRolesEntity.getBoardsByUserId(userId);
         if (listBoards.isEmpty())
             return Response.status(Response.Status.NOT_FOUND).build();
         return Response.ok(listBoards).build();
@@ -40,10 +40,10 @@ public class BoardController {
 
     @GET
     @Path("{boardId}")
-    public Response getBoardById(@PathParam("boardId")Long boardId) {
-        return BoardEntity.findByIdOptional(boardId)
-                .map(board -> Response.ok(board).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).build());
+    public Response getBoardById(@PathParam("boardId")Long boardId,@PathParam("userId")Long userId) {
+        if(UsersBoardsRolesEntity.canChange(userId,boardId)){
+            return Response.ok(BoardEntity.findById(boardId)).build();
+        }else return Response.status(Response.Status.NOT_FOUND).build();
 
     }
 
