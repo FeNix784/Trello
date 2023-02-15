@@ -33,7 +33,6 @@ public class UserController {
 
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getUserById(@PathParam("id") Long id){
         return UserEntity.findByIdOptional(id)
                 .map(person -> Response.ok(person).build())
