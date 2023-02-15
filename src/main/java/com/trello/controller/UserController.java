@@ -1,6 +1,7 @@
 package com.trello.controller;
 
 import com.trello.entity.UserEntity;
+import com.trello.entity.UsersBoardsRolesEntity;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -42,7 +43,9 @@ public class UserController {
 
     @DELETE
     @Path("{id}")
+    @Transactional
     public Response deleteUserById(@PathParam("id") Long id){
+        UsersBoardsRolesEntity.delete("user_id",id);
         if(UserEntity.deleteById(id)){
             return Response.status(Response.Status.OK).build();
         }return Response.status(Response.Status.NOT_FOUND).build();
