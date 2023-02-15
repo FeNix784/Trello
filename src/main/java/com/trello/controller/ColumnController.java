@@ -3,7 +3,6 @@ package com.trello.controller;
 
 import com.trello.entity.BoardEntity;
 import com.trello.entity.ColumnEntity;
-import com.trello.entity.TaskEntity;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -18,7 +17,7 @@ public class ColumnController {
 
     @POST
     @Transactional
-    public Response createColumn(ColumnEntity column, @PathParam("boardId") Long boardId, @PathParam("userID") Long userId){
+    public Response createColumn(ColumnEntity column,@PathParam("userID") Long userId ,@PathParam("boardId") Long boardId){
         ColumnEntity.persist(column);
         if(column.isPersistent()){
             BoardEntity board = BoardEntity.findById(boardId);
@@ -32,21 +31,6 @@ public class ColumnController {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    @POST
-    @Path("{columnId}")
-    @Transactional
-    public Response createTask(TaskEntity task, @PathParam("columnId") Long columnId){
-        TaskEntity.persist(task);
-        if(task.isPersistent()){
-            ColumnEntity column = ColumnEntity.findById(columnId);
-            if (column == null) {
-                return Response.status(Response.Status.BAD_REQUEST).build();
-            }
-            column.tasks.add(task);
-            return Response.created(URI.create("/columns")).build();
 
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
-    }
 
 }
