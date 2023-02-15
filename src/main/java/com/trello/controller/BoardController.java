@@ -59,4 +59,16 @@ public class BoardController {
         return Response.ok(Response.Status.OK).build();
     }
 
+    @DELETE
+    @Path("{boardId}")
+    @Transactional
+    public Response deleteBoard(@PathParam("boardId")Long boardId) {
+        BoardEntity entity = BoardEntity.findById(boardId);
+        if (entity == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        UsersBoardsRolesEntity.delete("board_id", boardId);
+        BoardEntity.deleteById(boardId);
+        return Response.ok(Response.Status.OK).build();
+    }
 }
