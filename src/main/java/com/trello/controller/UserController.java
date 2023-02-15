@@ -8,7 +8,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.sql.PreparedStatement;
 import java.util.List;
 
 @Path("/users")
@@ -45,7 +44,8 @@ public class UserController {
     @Path("{id}")
     @Transactional
     public Response deleteUserById(@PathParam("id") Long id){
-        UsersBoardsRolesEntity.delete("user_id",id);
+        List<UsersBoardsRolesEntity> urb = UsersBoardsRolesEntity.list("user_id",id);
+        urb.forEach(record->{record.board.delete();record.user.delete();});
         if(UserEntity.deleteById(id)){
             return Response.status(Response.Status.OK).build();
         }return Response.status(Response.Status.NOT_FOUND).build();
