@@ -4,6 +4,7 @@ package com.trello.controller;
 import com.trello.entity.BoardEntity;
 import com.trello.entity.ColumnEntity;
 import com.trello.entity.TaskEntity;
+import com.trello.entity.UsersBoardsRolesEntity;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
