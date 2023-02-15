@@ -13,7 +13,7 @@ public class TaskEntity extends PanacheEntity {
     public String text;
     public String description;
 
-    public Integer order;
+    public Integer position;
 
     @OneToMany
     public List<UserEntity> makers;
