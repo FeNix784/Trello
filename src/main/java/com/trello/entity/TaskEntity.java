@@ -1,9 +1,9 @@
 package com.trello.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -19,7 +19,7 @@ public class TaskEntity extends PanacheEntity {
     @OneToMany
     public List<TagEntity> tags;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     public List<CommentEntity> comments;
 
 }

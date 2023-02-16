@@ -20,4 +20,6 @@ public class BoardEntity extends PanacheEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     public List<ColumnEntity> columns = new CopyOnWriteArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    public List<TagEntity> tags = new CopyOnWriteArrayList<>();
 }
