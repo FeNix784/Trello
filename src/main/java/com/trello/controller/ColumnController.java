@@ -1,6 +1,7 @@
 package com.trello.controller;
 
 
+import com.trello.entity.*;
 import com.trello.entity.BoardEntity;
 import com.trello.entity.ColumnEntity;
 import com.trello.entity.UsersBoardsRolesEntity;
@@ -9,6 +10,9 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.URI;
+import java.util.List;
+
 
 
 @Path("/{userID}/boards/{boardID}/columns")
@@ -62,20 +66,13 @@ public class ColumnController {
         entity.title = column.title;
         return Response.ok(entity).build();
     }
-
+    
     @DELETE
-    @Path("{columnId}")
+    @Path("{columnID}")
     @Transactional
-    public Response deleteColumn(@PathParam("columnId")Long columnId) {
-        ColumnEntity entity = ColumnEntity.findById(columnId);
-        if (entity == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        // НЕ РАБОТАЕТ!!!
-        // violates foreign key constraint in other table!
-        ColumnEntity.deleteById(columnId);
-
+    public Response deleteColumn(@PathParam("columnID") Long columnID, @PathParam("boardId") Long boardId){
+        BoardEntity board = BoardEntity.findById(boardId);
+        board.columns.removeIf(columnEntity -> columnEntity.id.equals(columnID));
         return Response.ok(Response.Status.OK).build();
     }
 }

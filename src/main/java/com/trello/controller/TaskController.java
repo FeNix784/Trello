@@ -9,13 +9,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 
-@Path("/{userID}/boards/{boardId}/columns")
+@Path("/{userID}/boards/{boardId}/columns/{columnId}/tasks")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TaskController {
+
     @POST
-    @Path("{columnId}")
-    @Transactional
+    @Transactional()
     public Response createTask(TaskEntity task, @PathParam("columnId") Long columnId){
         TaskEntity.persist(task);
         if(task.isPersistent()){
@@ -24,8 +24,7 @@ public class TaskController {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
             column.tasks.add(task);
-            return Response.ok(task).build();
-
+            return Response.created(URI.create("/columns")).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
