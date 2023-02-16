@@ -26,27 +26,25 @@ public class UsersBoardsRolesEntity extends PanacheEntity {
         this.role = role;
     }
 
-    public static List<BoardEntity>  getBoardsByUserId(Long userID){
-        List<UsersBoardsRolesEntity> ubrList = list("user_id",userID);
+    public static List<BoardEntity>  getBoardsByUserId(Long userId){
+        List<UsersBoardsRolesEntity> ubrList = list("user_id", userId);
         return ubrList.stream().map(ubr->ubr.board).collect(Collectors.toList());
     }
-    public static List<UserEntity>  getUsersByBoardId(Long boardID){
-        List<UsersBoardsRolesEntity> ubrList = list("board_id",boardID);;
+    public static List<UserEntity>  getUsersByBoardId(Long boardId){
+        List<UsersBoardsRolesEntity> ubrList = list("board_id", boardId);;
         return ubrList.stream().map(ubr->ubr.user).collect(Collectors.toList());
     }
-    public static Role getRoleByUserAndBoardId(Long userID, Long boardID){
-        UsersBoardsRolesEntity ubr = find("user_id = ?1 and board_id = ?2",userID,boardID).firstResult();
+    public static Role getRoleByUserAndBoardId(Long userId, Long boardId){
+        UsersBoardsRolesEntity ubr = find("user_id = ?1 and board_id = ?2", userId, boardId).firstResult();
         return ubr.role;
     }
-    public static Boolean canChange(Long userID, Long boardID){
-        UsersBoardsRolesEntity ubr = find("user_id = ?1 and board_id = ?2",userID,boardID).firstResult();
+    public static Boolean canChange(Long userId, Long boardId){
+        UsersBoardsRolesEntity ubr = find("user_id = ?1 and board_id = ?2 and role in (0, 1)", userId, boardId).firstResult();
         return ubr != null;
     }
 
-    public static Boolean canDelete(Long userID, Long boardID){
-        UsersBoardsRolesEntity ubr = find("user_id = ?1 and board_id = ?2 and role = 0",userID,boardID).firstResult();
+    public static Boolean canDelete(Long userId, Long boardId){
+        UsersBoardsRolesEntity ubr = find("user_id = ?1 and board_id = ?2 and role = 0", userId, boardId).firstResult();
         return ubr != null;
     }
-
-
 }

@@ -14,9 +14,6 @@ public class CommentEntity extends PanacheEntity {
     public Date date;
 
     @ManyToOne
-    public TaskEntity task;
-
-    @ManyToOne
     public UserEntity user;
 
 }
