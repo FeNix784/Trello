@@ -1,14 +1,14 @@
 package com.trello.controller;
 
 
-import com.trello.entity.BoardEntity;
-import com.trello.entity.ColumnEntity;
-import com.trello.entity.TaskEntity;
+import com.trello.entity.*;
+
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.List;
 
 @Path("/{userID}/boards/{boardId}/columns")
 @Produces(MediaType.APPLICATION_JSON)
@@ -31,21 +31,12 @@ public class ColumnController {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    @POST
-    @Path("{columnId}")
+    @DELETE
+    @Path("{columnID}")
     @Transactional
-    public Response createTask(TaskEntity task, @PathParam("columnId") Long columnId){
-        TaskEntity.persist(task);
-        if(task.isPersistent()){
-            ColumnEntity column = ColumnEntity.findById(columnId);
-            if (column == null) {
-                return Response.status(Response.Status.BAD_REQUEST).build();
-            }
-            column.tasks.add(task);
-            return Response.created(URI.create("/columns")).build();
-
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
+    public Response deleteColumn(@PathParam("columnID") Long columnID, @PathParam("boardId") Long boardId){
+        BoardEntity board = BoardEntity.findById(boardId);
+        board.columns.removeIf(columnEntity -> columnEntity.id.equals(columnID));
+        return Response.ok(Response.Status.OK).build();
     }
-
 }

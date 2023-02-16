@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.List;
@@ -16,9 +17,7 @@ public class BoardEntity extends PanacheEntity {
     //TODO: field limitation 12.02.2023
     public String title;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     public List<ColumnEntity> columns = new CopyOnWriteArrayList<>();
-
-
 
 }
