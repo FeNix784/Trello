@@ -46,4 +46,15 @@ public class UsersBoardsRolesEntity extends PanacheEntity {
         return false;
     }
 
+    public static Boolean canChange(Long userID, Long boardID){
+        UsersBoardsRolesEntity ubr = find("user_id = ?1 and board_id = ?2",userID,boardID).firstResult();
+        return ubr != null;
+    }
+
+    public static Boolean canDelete(Long userID, Long boardID){
+        UsersBoardsRolesEntity ubr = find("user_id = ?1 and board_id = ?2 and role = 0",userID,boardID).firstResult();
+        return ubr != null;
+    }
+
+
 }

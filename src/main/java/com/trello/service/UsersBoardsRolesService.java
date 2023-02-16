@@ -14,7 +14,7 @@ public class UsersBoardsRolesService {
         UsersBoardsRolesEntity ubr = new UsersBoardsRolesEntity(user,board,role);
         UsersBoardsRolesEntity.persist(ubr);
         if(ubr.isPersistent()){
-            return Response.created(URI.create("/"+ user.id + "/boards/" + board.id)).build();
+            return Response.ok(board).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }

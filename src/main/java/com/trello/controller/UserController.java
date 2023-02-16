@@ -1,6 +1,7 @@
 package com.trello.controller;
 
 import com.trello.entity.UserEntity;
+import com.trello.entity.UsersBoardsRolesEntity;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -32,11 +33,32 @@ public class UserController {
 
     @GET
     @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getUserById(@PathParam("id") Long id){
         return UserEntity.findByIdOptional(id)
                 .map(person -> Response.ok(person).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).build());
 
+    }
+
+    @DELETE
+    @Path("{id}")
+    @Transactional
+    public Response deleteUserById(@PathParam("id") Long id){
+        List<UsersBoardsRolesEntity> urb = UsersBoardsRolesEntity.list("user_id = ?1 and role = 0", id);
+        urb.forEach(record->{record.delete(); record.board.delete();});
+        if(UserEntity.deleteById(id)){
+            return Response.status(Response.Status.OK).build();
+        }return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+
+    @PUT
+    @Path("{id}")
+    @Transactional
+    public Response updateUserById(@PathParam("id") Long id){
+        if(UserEntity.update("id",id)==1){
+            return Response.status(Response.Status.OK).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 }
