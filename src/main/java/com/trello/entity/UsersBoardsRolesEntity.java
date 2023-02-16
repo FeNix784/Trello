@@ -47,4 +47,9 @@ public class UsersBoardsRolesEntity extends PanacheEntity {
         UsersBoardsRolesEntity ubr = find("user_id = ?1 and board_id = ?2 and role = 0", userId, boardId).firstResult();
         return ubr != null;
     }
+
+    public static Boolean isMember(Long userId, Long boardId){
+        UsersBoardsRolesEntity ubr = find("user_id = ?1 and board_id = ?2", userId, boardId).firstResult();
+        return ubr != null;
+    }
 }
