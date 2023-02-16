@@ -2,27 +2,22 @@ package com.trello.controller;
 
 
 import com.trello.entity.*;
-import com.trello.entity.BoardEntity;
-import com.trello.entity.ColumnEntity;
-import com.trello.entity.UsersBoardsRolesEntity;
-import com.trello.entity.TaskEntity;
+
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
-import java.util.List;
 
 
 
-@Path("/{userID}/boards/{boardID}/columns")
+@Path("/{userId}/boards/{boardId}/columns")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ColumnController {
 
     @POST
     @Transactional
-    public Response createColumn(ColumnEntity column,@PathParam("userID") Long userId ,@PathParam("boardID") Long boardId){
+    public Response createColumn(ColumnEntity column,@PathParam("userId") Long userId ,@PathParam("boardId") Long boardId){
         ColumnEntity.persist(column);
         if(!UsersBoardsRolesEntity.canChange(userId, boardId)){
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -42,9 +37,9 @@ public class ColumnController {
     @GET
     @Transactional
     @Path("{columnId}")
-    public Response getColumnById(@PathParam("userID") Long userId ,
+    public Response getColumnById(@PathParam("userId") Long userId ,
                                  @PathParam("columnId") Long columnId,
-                                 @PathParam("boardID") Long boardId) {
+                                 @PathParam("boardId") Long boardId) {
 
         if(!UsersBoardsRolesEntity.canChange(userId, boardId)){
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -68,11 +63,11 @@ public class ColumnController {
     }
     
     @DELETE
-    @Path("{columnID}")
+    @Path("{columnId}")
     @Transactional
-    public Response deleteColumn(@PathParam("columnID") Long columnID, @PathParam("boardId") Long boardId){
+    public Response deleteColumn(@PathParam("columnId") Long columnId, @PathParam("boardId") Long boardId){
         BoardEntity board = BoardEntity.findById(boardId);
-        board.columns.removeIf(columnEntity -> columnEntity.id.equals(columnID));
+        board.columns.removeIf(columnEntity -> columnEntity.id.equals(columnId));
         return Response.ok(Response.Status.OK).build();
     }
 }
