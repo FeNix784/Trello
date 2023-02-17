@@ -56,8 +56,7 @@ public class BoardController {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         boardEntity.title = board.title;
-        // TODO не возвращает id
-        return Response.ok(board).build();
+        return Response.ok(boardEntity).build();
     }
 
     @PUT
