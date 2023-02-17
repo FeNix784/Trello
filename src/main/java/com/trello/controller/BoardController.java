@@ -1,7 +1,7 @@
 package com.trello.controller;
 
 import com.trello.entity.*;
-import com.trello.service.BoardsTitlesService;
+import com.trello.records.BoardsTitlesRecord;
 import com.trello.service.UsersBoardsRolesService;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 
@@ -31,7 +31,7 @@ public class BoardController {
 
     @GET
     public Response getBoardsByUserID(@QueryParam("userId") Long userId) {
-        PanacheQuery<BoardsTitlesService> boards = UsersBoardsRolesEntity.find("user_id", userId).project(BoardsTitlesService.class);
+        PanacheQuery<BoardsTitlesRecord> boards = UsersBoardsRolesEntity.find("user_id", userId).project(BoardsTitlesRecord.class);
         return Response.ok(boards.list()).build();
     }
 
