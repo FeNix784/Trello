@@ -37,7 +37,7 @@ public class TagController {
     @GET
     @Path("{tagId}")
     public Response getTagById(@PathParam("tagId") Long tagId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if(!UsersBoardsRolesEntity.canChange(userId, boardId)){
+        if(!UsersBoardsRolesEntity.isMember(userId, boardId)){
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         return TagEntity.findByIdOptional(tagId)
