@@ -81,12 +81,15 @@ public class TagController {
     @DELETE
     @Path("{tagId}")
     @Transactional
-    public Response deleteTag(@PathParam("tagId") Long tagId,
+    public Response deleteBoardTag(@PathParam("tagId") Long tagId,
                               @QueryParam("userId") Long userId,
                               @QueryParam("boardId") Long boardId) {
-        if (UsersBoardsRolesEntity.canDelete(userId, boardId)) {
-            if (TagEntity.deleteById(tagId)) return Response.ok(Response.Status.OK).build();
-            else return Response.status(Response.Status.BAD_REQUEST).build();
+        if (UsersBoardsRolesEntity.canChange(userId, boardId)) {
+            BoardEntity board = BoardEntity.findById(boardId);
+            board.tags.removeIf(tagEntity -> tagEntity.id.equals(tagId));
+            return Response.ok(Response.Status.OK).build();
+//            if (TagEntity.deleteById(tagId)) return Response.ok(Response.Status.OK).build();
+//            else return Response.status(Response.Status.BAD_REQUEST).build();
         } else return Response.status(Response.Status.FORBIDDEN).build();
     }
 }
