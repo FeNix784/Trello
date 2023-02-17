@@ -10,14 +10,14 @@ import javax.ws.rs.core.Response;
 
 
 
-@Path("/{userId}/boards/{boardId}/columns")
+@Path("/columns")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ColumnController {
 
     @POST
     @Transactional
-    public Response createColumn(ColumnEntity column,@PathParam("userId") Long userId ,@PathParam("boardId") Long boardId){
+    public Response createColumn(ColumnEntity column,@QueryParam("userId") Long userId ,@QueryParam("boardId") Long boardId){
         ColumnEntity.persist(column);
         if(!UsersBoardsRolesEntity.canChange(userId, boardId)){
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -37,9 +37,9 @@ public class ColumnController {
     @GET
     @Transactional
     @Path("{columnId}")
-    public Response getColumnById(@PathParam("userId") Long userId ,
-                                 @PathParam("columnId") Long columnId,
-                                 @PathParam("boardId") Long boardId) {
+    public Response getColumnById(@QueryParam("userId") Long userId ,
+                                  @QueryParam("columnId") Long columnId,
+                                  @QueryParam("boardId") Long boardId) {
 
         if(!UsersBoardsRolesEntity.canChange(userId, boardId)){
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -53,19 +53,25 @@ public class ColumnController {
 
     @PUT
     @Path("{columnId}")
-    public Response updateColumn(ColumnEntity column, @PathParam("columnId")Long columnId) {
-        ColumnEntity entity = ColumnEntity.findById(columnId);
-        if (entity == null) {
+    public Response updateColumn(ColumnEntity column, @PathParam("columnId") Long columnId,
+                                 @QueryParam("userId") Long userId,
+                                 @QueryParam("boardId") Long boardId) {
+        if(!UsersBoardsRolesEntity.canChange(userId,boardId))return Response.status(Response.Status.FORBIDDEN).build();
+        ColumnEntity columnEntity = ColumnEntity.findById(columnId);
+        if (columnEntity == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        entity.title = column.title;
-        return Response.ok(entity).build();
+        columnEntity.title = column.title;
+        return Response.ok(columnEntity).build();
     }
     
     @DELETE
     @Path("{columnId}")
     @Transactional
-    public Response deleteColumn(@PathParam("columnId") Long columnId, @PathParam("boardId") Long boardId){
+    public Response deleteColumn(@PathParam("columnId") Long columnId,
+                                 @QueryParam("userId") Long userId,
+                                 @QueryParam("boardId") Long boardId){
+        if(!UsersBoardsRolesEntity.canChange(userId,boardId))return Response.status(Response.Status.FORBIDDEN).build();
         BoardEntity board = BoardEntity.findById(boardId);
         board.columns.removeIf(columnEntity -> columnEntity.id.equals(columnId));
         return Response.ok(Response.Status.OK).build();
