@@ -3,10 +3,10 @@ package com.trello.entity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -17,9 +17,11 @@ public class BoardEntity extends PanacheEntity {
     //TODO: field limitation 12.02.2023
     public String title;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     public List<ColumnEntity> columns = new CopyOnWriteArrayList<>();
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     public List<TagEntity> tags = new CopyOnWriteArrayList<>();
 }
