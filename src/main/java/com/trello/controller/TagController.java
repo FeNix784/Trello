@@ -1,8 +1,6 @@
 package com.trello.controller;
 
-import com.trello.entity.BoardEntity;
-import com.trello.entity.TagEntity;
-import com.trello.entity.UsersBoardsRolesEntity;
+import com.trello.entity.*;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.transaction.Transactional;
@@ -10,6 +8,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/tags")
 @Produces(MediaType.APPLICATION_JSON)
@@ -82,11 +81,27 @@ public class TagController {
     @Path("{tagId}")
     @Transactional
     public Response deleteBoardTag(@PathParam("tagId") Long tagId,
-                              @QueryParam("userId") Long userId,
-                              @QueryParam("boardId") Long boardId) {
+                                   @QueryParam("userId") Long userId,
+                                   @QueryParam("boardId") Long boardId) {
         if (UsersBoardsRolesEntity.canChange(userId, boardId)) {
             BoardEntity board = BoardEntity.findById(boardId);
             board.tags.removeIf(tagEntity -> tagEntity.id.equals(tagId));
+            return Response.ok(Response.Status.OK).build();
+//            if (TagEntity.deleteById(tagId)) return Response.ok(Response.Status.OK).build();
+//            else return Response.status(Response.Status.BAD_REQUEST).build();
+        } else return Response.status(Response.Status.FORBIDDEN).build();
+    }
+
+    @DELETE
+    @Path("{tagId}/unpin")
+    @Transactional
+    public Response deleteTaskTag(@PathParam("tagId") Long tagId,
+                                  @QueryParam("userId") Long userId,
+                                  @QueryParam("boardId") Long boardId,
+                                  @QueryParam("taskId") Long taskId) {
+        if (UsersBoardsRolesEntity.canChange(userId, boardId)) {
+            TaskEntity task = TaskEntity.findById(taskId);
+            task.tags.removeIf(tagEntity -> tagEntity.id.equals(tagId));
             return Response.ok(Response.Status.OK).build();
 //            if (TagEntity.deleteById(tagId)) return Response.ok(Response.Status.OK).build();
 //            else return Response.status(Response.Status.BAD_REQUEST).build();
