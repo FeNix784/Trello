@@ -11,6 +11,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.stream.events.Comment;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 
 @Path("/comments")
@@ -45,7 +47,8 @@ public class CommentController {
 
        TaskEntity task = TaskEntity.findById(taskId);
        if(task!=null){
-           return Response.ok(task.comments).build();
+           return Response.ok(task.comments.stream().sorted(Comparator.comparing(o -> o.date)).
+                   collect(Collectors.toList())).build();
        }return Response.status(Response.Status.BAD_REQUEST).build();
 
     }
