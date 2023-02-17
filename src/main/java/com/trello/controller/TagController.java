@@ -20,7 +20,7 @@ public class TagController {
     @Transactional
     public Response createTag(TagEntity tag, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
         TagEntity.persist(tag);
-        if(!UsersBoardsRolesEntity.canChange(userId, boardId)){
+        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         if (tag.isPersistent()) {
@@ -36,8 +36,10 @@ public class TagController {
 
     @GET
     @Path("{tagId}")
-    public Response getTagById(@PathParam("tagId") Long tagId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if(!UsersBoardsRolesEntity.isMember(userId, boardId)){
+    public Response getTagById(@PathParam("tagId") Long tagId,
+                               @QueryParam("userId") Long userId,
+                               @QueryParam("boardId") Long boardId) {
+        if (!UsersBoardsRolesEntity.isMember(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         return TagEntity.findByIdOptional(tagId)
@@ -48,7 +50,7 @@ public class TagController {
 
     @GET
     public Response getTagsByBoardId(@QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if(!UsersBoardsRolesEntity.canChange(userId, boardId)){
+        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         BoardEntity board = BoardEntity.findById(boardId);
@@ -61,8 +63,10 @@ public class TagController {
     @PUT
     @Path("{tagId}")
     @Transactional
-    public Response updateTag(TagEntity tag, @PathParam("tagId")Long tagId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if(!UsersBoardsRolesEntity.canChange(userId, boardId)){
+    public Response updateTag(TagEntity tag, @PathParam("tagId") Long tagId,
+                              @QueryParam("userId") Long userId,
+                              @QueryParam("boardId") Long boardId) {
+        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         TagEntity entity = TagEntity.findById(tagId);
@@ -77,10 +81,12 @@ public class TagController {
     @DELETE
     @Path("{tagId}")
     @Transactional
-    public Response deleteTag(@PathParam("tagId")Long tagId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if(UsersBoardsRolesEntity.canDelete(userId, boardId)){
+    public Response deleteTag(@PathParam("tagId") Long tagId,
+                              @QueryParam("userId") Long userId,
+                              @QueryParam("boardId") Long boardId) {
+        if (UsersBoardsRolesEntity.canDelete(userId, boardId)) {
             if (TagEntity.deleteById(tagId)) return Response.ok(Response.Status.OK).build();
-            else return Response.status(Response.Status.BAD_REQUEST).build();}
-        else return Response.status(Response.Status.FORBIDDEN).build();
+            else return Response.status(Response.Status.BAD_REQUEST).build();
+        } else return Response.status(Response.Status.FORBIDDEN).build();
     }
 }
