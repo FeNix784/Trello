@@ -17,11 +17,11 @@ public class TaskEntity extends PanacheEntity {
     public Integer position;
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     public List<UserEntity> makers = new CopyOnWriteArrayList<>();
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     public List<TagEntity> tags = new CopyOnWriteArrayList<>();
 
     @LazyCollection(LazyCollectionOption.FALSE)
