@@ -68,6 +68,22 @@ public class TagController {
     }
 
     @GET
+    public Response getTagsByTaskId(@QueryParam("userId") Long userId,
+                                    @QueryParam("boardId") Long boardId,
+                                    @QueryParam("taskId") Long taskId) {
+        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        Optional<TaskEntity> task = TaskEntity.findByIdOptional(taskId);
+        if (task.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
+        List<TagEntity> listTags = task.get().tags;
+        if (listTags.isEmpty())
+            return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok(listTags).build();
+
+    }
+
+    @GET
     public Response getTagsByBoardId(@QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
         if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
