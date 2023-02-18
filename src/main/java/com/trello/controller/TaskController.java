@@ -1,13 +1,7 @@
 package com.trello.controller;
 
-import com.trello.entity.ColumnEntity;
-import com.trello.entity.TaskEntity;
-import com.trello.entity.UserEntity;
-import com.trello.entity.UsersBoardsRolesEntity;
-import lombok.SneakyThrows;
+import com.trello.entity.*;
 
-import javax.inject.Inject;
-import javax.transaction.TransactionManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -23,11 +17,8 @@ public class TaskController {
 
     @POST
     @Transactional
-    public Response createTask(TaskEntity task, @QueryParam("userId") Long userId,
-                               @QueryParam("boardId") Long boardId,
-                               @QueryParam("columnId") Long columnId) {
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId))
-            return Response.status(Response.Status.FORBIDDEN).build();
+    public Response createTask(TaskEntity task, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
+        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) return Response.status(Response.Status.FORBIDDEN).build();
         TaskEntity.persist(task);
         if (task.isPersistent()) {
             ColumnEntity column = ColumnEntity.findById(columnId);
@@ -39,66 +30,40 @@ public class TaskController {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-
     @GET
     @Path("{taskId}")
-    public Response getById(@PathParam("taskId") Long taskId,
-                            @QueryParam("userId") Long userId,
-                            @QueryParam("boardId") Long boardId,
-                            @QueryParam("columnId") Long columnId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
-            return Response.status(Response.Status.FORBIDDEN).build();
+    public Response getById(@PathParam("taskId") Long taskId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
+        if (!UsersBoardsRolesEntity.isMember(userId, boardId)) return Response.status(Response.Status.FORBIDDEN).build();
         TaskEntity task = TaskEntity.findById(taskId);
-        if (task != null) {
-            return Response.ok(task).build();
-        }
+        if (task != null) return Response.ok(task).build();
         return Response.status(Response.Status.BAD_REQUEST).build();
-
     }
 
     @GET
-    public Response getByColumnId(@QueryParam("userId") Long userId,
-                                  @QueryParam("boardId") Long boardId,
-                                  @QueryParam("columnId") Long columnId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
-            return Response.status(Response.Status.FORBIDDEN).build();
+    public Response getByColumnId(@QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
+        if (!UsersBoardsRolesEntity.isMember(userId, boardId)) return Response.status(Response.Status.FORBIDDEN).build();
         ColumnEntity column = ColumnEntity.findById(columnId);
-        if (column != null) {
-            return Response.ok(column.tasks.stream().sorted(Comparator.comparing(o -> o.position)).
-                    collect(Collectors.toList())).build();
-        }
+        if (column != null) return Response.ok(column.tasks.stream().sorted(Comparator.comparing(o -> o.position)).collect(Collectors.toList())).build();
         return Response.status(Response.Status.BAD_REQUEST).build();
-
     }
 
     @DELETE
     @Transactional
     @Path("{taskId}")
-    public Response deleteById(@PathParam("taskId") Long taskId,
-                               @QueryParam("userId") Long userId,
-                               @QueryParam("boardId") Long boardId,
-                               @QueryParam("columnId") Long columnId) {
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId))
-            return Response.status(Response.Status.FORBIDDEN).build();
+    public Response deleteById(@PathParam("taskId") Long taskId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
+        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) return Response.status(Response.Status.FORBIDDEN).build();
         ColumnEntity column = ColumnEntity.findById(columnId);
         if (column == null) return Response.status(Response.Status.BAD_REQUEST).build();
         column.tasks.removeIf(taskEntity -> taskEntity.id.equals(taskId));
         TaskEntity.deleteById(taskId);
         return Response.ok().build();
-
-
     }
 
     @Transactional
     @PUT
     @Path("{taskId}")
-    public Response updateById(TaskEntity task,
-                               @PathParam("taskId") Long taskId,
-                               @QueryParam("userId") Long userId,
-                               @QueryParam("boardId") Long boardId) {
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId))
-            return Response.status(Response.Status.FORBIDDEN).build();
-
+    public Response updateById(TaskEntity task, @PathParam("taskId") Long taskId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
+        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) return Response.status(Response.Status.FORBIDDEN).build();
         TaskEntity taskEntity = TaskEntity.findById(taskId);
         if (taskEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
         taskEntity.updateTask(task.text, task.description,task.position,task.makers,task.tags,task.comments);

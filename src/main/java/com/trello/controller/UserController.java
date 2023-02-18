@@ -7,7 +7,6 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
 import java.util.List;
 
 @Path("/users")
@@ -28,7 +27,7 @@ public class UserController {
     public Response createUser(UserEntity person){
         UserEntity.persist(person);
         if(person.isPersistent()){
-            return Response.created(URI.create("/users/" + person.id)).build();
+            return Response.ok(person).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
