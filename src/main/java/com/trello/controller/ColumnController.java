@@ -33,7 +33,7 @@ public class ColumnController {
     @GET
     @Transactional
     @Path("{columnId}")
-    public Response getColumnById(@QueryParam("userId") Long userId, @QueryParam("columnId") Long columnId, @QueryParam("boardId") Long boardId) {
+    public Response getColumnById(@PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
         if (!UsersBoardsRolesEntity.canChange(userId, boardId))
             return Response.status(Response.Status.BAD_REQUEST).build();
         return ColumnEntity.findByIdOptional(columnId).map(column -> Response.ok(column).build()).orElse(Response.status(Response.Status.NOT_FOUND).build());
