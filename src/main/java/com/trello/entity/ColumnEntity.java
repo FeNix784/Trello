@@ -11,8 +11,10 @@ import java.util.List;
 public class ColumnEntity extends PanacheEntity {
 
 
+
     public String title;
 
+    public Integer position;
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     public List<TaskEntity> tasks;

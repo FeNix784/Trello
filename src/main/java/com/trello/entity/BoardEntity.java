@@ -17,6 +17,8 @@ public class BoardEntity extends PanacheEntity {
     //TODO: field limitation 12.02.2023
     public String title;
 
+
+    @OrderBy("position")
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     public List<ColumnEntity> columns = new CopyOnWriteArrayList<>();
