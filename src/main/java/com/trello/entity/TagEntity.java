@@ -9,5 +9,5 @@ import javax.persistence.Entity;
 public class TagEntity extends PanacheEntity {
 
     public String title;
-    public String color;
+    public int color;
 }

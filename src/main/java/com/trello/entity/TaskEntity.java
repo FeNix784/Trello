@@ -1,6 +1,5 @@
 package com.trello.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -18,16 +17,16 @@ public class TaskEntity extends PanacheEntity {
     public Integer position;
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     public List<UserEntity> makers = new CopyOnWriteArrayList<>();
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     public List<TagEntity> tags = new CopyOnWriteArrayList<>();
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<CommentEntity> comments;
+    public List<CommentEntity> comments = new CopyOnWriteArrayList<>();
 
 
     public void updateTask(String text, String description, Integer position, List<UserEntity> makers, List<TagEntity> tags, List<CommentEntity> comments) {
