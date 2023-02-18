@@ -1,12 +1,12 @@
 package com.trello.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Entity
 public class TaskEntity extends PanacheEntity {
@@ -18,14 +18,14 @@ public class TaskEntity extends PanacheEntity {
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany
-    public List<UserEntity> makers;
+    public List<UserEntity> makers = new CopyOnWriteArrayList<>();
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany
-    public List<TagEntity> tags;
+    public List<TagEntity> tags = new CopyOnWriteArrayList<>();
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<CommentEntity> comments;
+    public List<CommentEntity> comments = new CopyOnWriteArrayList<>();
 
 }

@@ -49,10 +49,11 @@ public class TaskController {
         return Response.status(Response.Status.BAD_REQUEST).build();
 
     }
+
     @GET
     public Response getByColumnId(@QueryParam("userId") Long userId,
-                            @QueryParam("boardId") Long boardId,
-                            @QueryParam("columnId") Long columnId) {
+                                  @QueryParam("boardId") Long boardId,
+                                  @QueryParam("columnId") Long columnId) {
         if (!UsersBoardsRolesEntity.isMember(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         ColumnEntity column = ColumnEntity.findById(columnId);
@@ -63,6 +64,7 @@ public class TaskController {
         return Response.status(Response.Status.BAD_REQUEST).build();
 
     }
+
     @DELETE
     @Transactional
     @Path("{taskId}")
@@ -73,7 +75,7 @@ public class TaskController {
         if (!UsersBoardsRolesEntity.canChange(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         ColumnEntity column = ColumnEntity.findById(columnId);
-        if(column==null) return Response.status(Response.Status.BAD_REQUEST).build();
+        if (column == null) return Response.status(Response.Status.BAD_REQUEST).build();
         column.tasks.removeIf(taskEntity -> taskEntity.id.equals(taskId));
         TaskEntity.deleteById(taskId);
         return Response.ok().build();
@@ -96,9 +98,4 @@ public class TaskController {
         return Response.status(Response.Status.BAD_REQUEST).build();
 
     }
-
-
-
-    // TODO Реализовать GET, POST, DELETE запрос на получение задачи
-
 }
