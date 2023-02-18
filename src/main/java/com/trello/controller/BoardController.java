@@ -4,6 +4,7 @@ import com.trello.entity.*;
 import com.trello.records.BoardsTitlesRecord;
 import com.trello.service.UsersBoardsRolesService;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import org.jboss.resteasy.annotations.Query;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;

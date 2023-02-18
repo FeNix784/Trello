@@ -28,6 +28,7 @@ public class ColumnController {
             if (board == null) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
+            column.position+=board.columns.size()+1;
             board.columns.add(column);
             return Response.ok(column).build();
         }
