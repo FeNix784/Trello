@@ -103,11 +103,5 @@ public class TaskController {
         if (taskEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
         taskEntity.updateTask(task.text, task.description,task.position,task.makers,task.tags,task.comments);
         return Response.ok(taskEntity).build();
-
-
     }
-
-
-    // TODO Реализовать GET, POST, DELETE запрос на получение задачи
-
 }

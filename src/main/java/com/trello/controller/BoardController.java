@@ -21,9 +21,7 @@ public class BoardController {
         BoardEntity.persist(board);
         if (board.isPersistent()) {
             UserEntity user = UserEntity.findById(userId);
-            if (user == null) {
-                return Response.status(Response.Status.BAD_REQUEST).build();
-            }
+            if (user == null) return Response.status(Response.Status.BAD_REQUEST).build();
             return UsersBoardsRolesService.addUserRole(user, board, Role.CREATOR);
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -38,9 +36,8 @@ public class BoardController {
     @GET
     @Path("{boardId}")
     public Response getBoardById(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId) {
-        if (UsersBoardsRolesEntity.isMember(userId, boardId)) {
-            return Response.ok(BoardEntity.findById(boardId)).build();
-        } else return Response.status(Response.Status.NOT_FOUND).build();
+        if (UsersBoardsRolesEntity.isMember(userId, boardId)) return Response.ok(BoardEntity.findById(boardId)).build();
+        else return Response.status(Response.Status.NOT_FOUND).build();
 
     }
 
@@ -49,12 +46,8 @@ public class BoardController {
     @Transactional
     public Response updateBoard(BoardEntity board, @PathParam("boardId") Long boardId, @QueryParam("userId") Long userId) {
         BoardEntity boardEntity = BoardEntity.findById(boardId);
-        if (boardEntity == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
+        if (boardEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
+        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) return Response.status(Response.Status.FORBIDDEN).build();
         boardEntity.title = board.title;
         return Response.ok(boardEntity).build();
     }
@@ -63,17 +56,12 @@ public class BoardController {
     @Path("{boardId}/invite")
     @Transactional
     public Response addUser(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId, @QueryParam("newUserId") Long newUserId, @QueryParam("role") int role) {
+        if (userId.equals(newUserId)) return Response.status(Response.Status.BAD_REQUEST).build();
         BoardEntity board = BoardEntity.findById(boardId);
-        if (board == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
+        if (board == null) return Response.status(Response.Status.NOT_FOUND).build();
+        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) return Response.status(Response.Status.FORBIDDEN).build();
         UserEntity user = UserEntity.findById(newUserId);
-        if (user == null) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+        if (user == null) return Response.status(Response.Status.BAD_REQUEST).build();
         return UsersBoardsRolesService.addUserRole(user, board, Role.returnRole(role));
     }
 
