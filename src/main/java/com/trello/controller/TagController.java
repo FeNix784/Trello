@@ -68,6 +68,7 @@ public class TagController {
     }
 
     @GET
+    @Path("/task")
     public Response getTagsByTaskId(@QueryParam("userId") Long userId,
                                     @QueryParam("boardId") Long boardId,
                                     @QueryParam("taskId") Long taskId) {
@@ -84,6 +85,7 @@ public class TagController {
     }
 
     @GET
+    @Path("/board")
     public Response getTagsByBoardId(@QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
         if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
