@@ -120,8 +120,11 @@ public class TagController {
                                   @QueryParam("boardId") Long boardId,
                                   @QueryParam("taskId") Long taskId) {
         if (UsersBoardsRolesEntity.canChange(userId, boardId)) {
-            TaskEntity task = TaskEntity.findById(taskId);
-            task.tags.removeIf(tagEntity -> tagEntity.id.equals(tagId));
+            Optional<TaskEntity> task = TaskEntity.findByIdOptional(taskId);
+            if (task.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
+            Optional<TagEntity> tag = task.get().tags.stream().filter(tagEntity -> tagEntity.id.equals(tagId)).findFirst();
+            if (tag.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
+            task.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId));
             return Response.ok(Response.Status.OK).build();
 //            if (TagEntity.deleteById(tagId)) return Response.ok(Response.Status.OK).build();
 //            else return Response.status(Response.Status.BAD_REQUEST).build();
