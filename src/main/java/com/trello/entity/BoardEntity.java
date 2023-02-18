@@ -7,7 +7,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Entity
@@ -25,5 +25,5 @@ public class BoardEntity extends PanacheEntity {
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<TagEntity> tags = new CopyOnWriteArrayList<>();
+    public Set<TagEntity> tags = new HashSet<>();
 }

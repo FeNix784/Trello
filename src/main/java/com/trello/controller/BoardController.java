@@ -4,7 +4,6 @@ import com.trello.entity.*;
 import com.trello.records.BoardsTitlesRecord;
 import com.trello.service.UsersBoardsRolesService;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import org.jboss.resteasy.annotations.Query;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -39,7 +38,6 @@ public class BoardController {
     public Response getBoardById(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId) {
         if (UsersBoardsRolesEntity.isMember(userId, boardId)) return Response.ok(BoardEntity.findById(boardId)).build();
         else return Response.status(Response.Status.NOT_FOUND).build();
-
     }
 
     @PUT
@@ -48,7 +46,8 @@ public class BoardController {
     public Response updateBoard(BoardEntity board, @PathParam("boardId") Long boardId, @QueryParam("userId") Long userId) {
         BoardEntity boardEntity = BoardEntity.findById(boardId);
         if (boardEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) return Response.status(Response.Status.FORBIDDEN).build();
+        if (!UsersBoardsRolesEntity.canChange(userId, boardId))
+            return Response.status(Response.Status.FORBIDDEN).build();
         boardEntity.title = board.title;
         return Response.ok(boardEntity).build();
     }
@@ -60,7 +59,8 @@ public class BoardController {
         if (userId.equals(newUserId)) return Response.status(Response.Status.BAD_REQUEST).build();
         BoardEntity board = BoardEntity.findById(boardId);
         if (board == null) return Response.status(Response.Status.NOT_FOUND).build();
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) return Response.status(Response.Status.FORBIDDEN).build();
+        if (!UsersBoardsRolesEntity.canChange(userId, boardId))
+            return Response.status(Response.Status.FORBIDDEN).build();
         UserEntity user = UserEntity.findById(newUserId);
         if (user == null) return Response.status(Response.Status.BAD_REQUEST).build();
         return UsersBoardsRolesService.addUserRole(user, board, Role.returnRole(role));

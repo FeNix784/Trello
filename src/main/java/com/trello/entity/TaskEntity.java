@@ -5,8 +5,8 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class TaskEntity extends PanacheEntity {
@@ -26,10 +26,10 @@ public class TaskEntity extends PanacheEntity {
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<CommentEntity> comments = new CopyOnWriteArrayList<>();
+    public Set<CommentEntity> comments = new HashSet<>();
 
 
-    public void updateTask(String text, String description, Integer position, Set<UserEntity> makers, Set<TagEntity> tags, List<CommentEntity> comments) {
+    public void updateTask(String text, String description, Integer position, Set<UserEntity> makers, Set<TagEntity> tags, Set<CommentEntity> comments) {
         this.text = text;
         this.description = description;
         this.position = position;

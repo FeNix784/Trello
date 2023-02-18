@@ -15,18 +15,16 @@ import java.util.List;
 public class UserController {
 
     @GET
-    public Response getAllUsers(){
+    public Response getAllUsers() {
         List<UserEntity> users = UserEntity.listAll();
         return Response.ok(users).build();
     }
 
-
-
     @POST
     @Transactional
-    public Response createUser(UserEntity person){
+    public Response createUser(UserEntity person) {
         UserEntity.persist(person);
-        if(person.isPersistent()){
+        if (person.isPersistent()) {
             return Response.ok(person).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -34,30 +32,32 @@ public class UserController {
 
     @GET
     @Path("{id}")
-    public Response getUserById(@PathParam("id") Long id){
+    public Response getUserById(@PathParam("id") Long id) {
         return UserEntity.findByIdOptional(id)
                 .map(person -> Response.ok(person).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).build());
-
     }
 
     @DELETE
     @Path("{id}")
     @Transactional
-    public Response deleteUserById(@PathParam("id") Long id){
+    public Response deleteUserById(@PathParam("id") Long id) {
         List<UsersBoardsRolesEntity> urb = UsersBoardsRolesEntity.list("user_id = ?1 and role = 0", id);
-        urb.forEach(record->{record.delete(); record.board.delete();});
-        if(UserEntity.deleteById(id)){
+        urb.forEach(record -> {
+            record.delete();
+            record.board.delete();
+        });
+        if (UserEntity.deleteById(id)) {
             return Response.status(Response.Status.OK).build();
-        }return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
-
 
     @PUT
     @Path("{id}")
     @Transactional
-    public Response updateUserById(@PathParam("id") Long id){
-        if(UserEntity.update("id",id)==1){
+    public Response updateUserById(@PathParam("id") Long id) {
+        if (UserEntity.update("id", id) == 1) {
             return Response.status(Response.Status.OK).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
