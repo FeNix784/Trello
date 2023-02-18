@@ -7,6 +7,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Entity
 public class TaskEntity extends PanacheEntity {
@@ -17,12 +18,12 @@ public class TaskEntity extends PanacheEntity {
     public Integer position;
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany
-    public List<UserEntity> makers;
+    @ManyToMany
+    public List<UserEntity> makers = new CopyOnWriteArrayList<>();
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany
-    public List<TagEntity> tags;
+    @ManyToMany
+    public List<TagEntity> tags = new CopyOnWriteArrayList<>();
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
