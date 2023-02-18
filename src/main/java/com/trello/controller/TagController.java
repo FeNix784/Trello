@@ -7,6 +7,8 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -122,8 +124,19 @@ public class TagController {
                                    @QueryParam("userId") Long userId,
                                    @QueryParam("boardId") Long boardId) {
         if (UsersBoardsRolesEntity.canChange(userId, boardId)) {
-            BoardEntity board = BoardEntity.findById(boardId);
-            board.tags.removeIf(tagEntity -> tagEntity.id.equals(tagId));
+            Optional<BoardEntity> board = BoardEntity.findByIdOptional(boardId);
+            if (board.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
+            List<ColumnEntity> columnsOnBoard = board.get().columns;
+            List<TaskEntity> tasksOnBoard = new ArrayList<>();
+            for (ColumnEntity column : columnsOnBoard) {
+                tasksOnBoard.addAll(column.tasks);
+            }
+            List<TagEntity> tagsOnBoard = new ArrayList<>();
+            for (TaskEntity task : tasksOnBoard) {
+                tagsOnBoard.addAll(task.tags);
+            }
+            if (!tagsOnBoard.removeIf(tagEntity -> tagEntity.id.equals(tagId))) return Response.status(Response.Status.NOT_FOUND).build();
+            if (!board.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId))) return Response.status(Response.Status.NOT_FOUND).build();
             return Response.ok(Response.Status.OK).build();
 //            if (TagEntity.deleteById(tagId)) return Response.ok(Response.Status.OK).build();
 //            else return Response.status(Response.Status.BAD_REQUEST).build();
