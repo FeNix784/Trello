@@ -2,8 +2,12 @@ package com.trello.controller;
 
 import com.trello.entity.ColumnEntity;
 import com.trello.entity.TaskEntity;
+import com.trello.entity.UserEntity;
 import com.trello.entity.UsersBoardsRolesEntity;
+import lombok.SneakyThrows;
 
+import javax.inject.Inject;
+import javax.transaction.TransactionManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -15,6 +19,7 @@ import java.util.stream.Collectors;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TaskController {
+
 
     @POST
     @Transactional
@@ -28,6 +33,7 @@ public class TaskController {
             ColumnEntity column = ColumnEntity.findById(columnId);
             if (column == null) return Response.status(Response.Status.BAD_REQUEST).build();
             column.tasks.add(task);
+            task.makers.add(UserEntity.findById(userId));
             return Response.ok(task).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -49,10 +55,11 @@ public class TaskController {
         return Response.status(Response.Status.BAD_REQUEST).build();
 
     }
+
     @GET
     public Response getByColumnId(@QueryParam("userId") Long userId,
-                            @QueryParam("boardId") Long boardId,
-                            @QueryParam("columnId") Long columnId) {
+                                  @QueryParam("boardId") Long boardId,
+                                  @QueryParam("columnId") Long columnId) {
         if (!UsersBoardsRolesEntity.isMember(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         ColumnEntity column = ColumnEntity.findById(columnId);
@@ -63,6 +70,7 @@ public class TaskController {
         return Response.status(Response.Status.BAD_REQUEST).build();
 
     }
+
     @DELETE
     @Transactional
     @Path("{taskId}")
@@ -73,7 +81,7 @@ public class TaskController {
         if (!UsersBoardsRolesEntity.canChange(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         ColumnEntity column = ColumnEntity.findById(columnId);
-        if(column==null) return Response.status(Response.Status.BAD_REQUEST).build();
+        if (column == null) return Response.status(Response.Status.BAD_REQUEST).build();
         column.tasks.removeIf(taskEntity -> taskEntity.id.equals(taskId));
         TaskEntity.deleteById(taskId);
         return Response.ok().build();
@@ -81,22 +89,23 @@ public class TaskController {
 
     }
 
-    @PUT
     @Transactional
+    @PUT
     @Path("{taskId}")
-    public Response updateById(@PathParam("taskId") Long taskId,
+    public Response updateById(TaskEntity task,
+                               @PathParam("taskId") Long taskId,
                                @QueryParam("userId") Long userId,
                                @QueryParam("boardId") Long boardId) {
         if (!UsersBoardsRolesEntity.canChange(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
 
-        if (TaskEntity.deleteById(taskId)) {
-            return Response.ok().build();
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
+        TaskEntity taskEntity = TaskEntity.findById(taskId);
+        if (taskEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
+        taskEntity.updateTask(task.text, task.description,task.position,task.makers,task.tags,task.comments);
+        return Response.ok(taskEntity).build();
+
 
     }
-
 
 
     // TODO Реализовать GET, POST, DELETE запрос на получение задачи

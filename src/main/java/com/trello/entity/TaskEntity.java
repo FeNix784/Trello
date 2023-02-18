@@ -28,4 +28,13 @@ public class TaskEntity extends PanacheEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     public List<CommentEntity> comments;
 
+
+    public void updateTask(String text, String description, Integer position, List<UserEntity> makers, List<TagEntity> tags, List<CommentEntity> comments) {
+        this.text = text;
+        this.description = description;
+        this.position = position;
+        this.makers = makers;
+        this.tags = tags;
+        this.comments = comments;
+    }
 }
