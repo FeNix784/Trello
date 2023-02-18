@@ -126,16 +126,8 @@ public class TagController {
         if (UsersBoardsRolesEntity.canChange(userId, boardId)) {
             Optional<BoardEntity> board = BoardEntity.findByIdOptional(boardId);
             if (board.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
-            List<ColumnEntity> columnsOnBoard = board.get().columns;
-            List<TaskEntity> tasksOnBoard = new ArrayList<>();
-            for (ColumnEntity column : columnsOnBoard) {
-                tasksOnBoard.addAll(column.tasks);
-            }
-            List<TagEntity> tagsOnBoard = new ArrayList<>();
-            for (TaskEntity task : tasksOnBoard) {
-                tagsOnBoard.addAll(task.tags);
-            }
-            if (!tagsOnBoard.removeIf(tagEntity -> tagEntity.id.equals(tagId))) return Response.status(Response.Status.NOT_FOUND).build();
+            List<TaskEntity> tasksOnBoard = board.get().columns.stream().flatMap(columnEntity -> columnEntity.tasks.stream()).toList();
+            tasksOnBoard.stream().map(taskEntity -> taskEntity.tags.removeIf(tagEntity -> tagEntity.id.equals(tagId)));
             if (!board.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId))) return Response.status(Response.Status.NOT_FOUND).build();
             return Response.ok(Response.Status.OK).build();
 //            if (TagEntity.deleteById(tagId)) return Response.ok(Response.Status.OK).build();
