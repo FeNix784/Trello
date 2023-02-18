@@ -8,6 +8,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path("/tags")
@@ -28,6 +29,25 @@ public class TagController {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
             board.tags.add(tag);
+            return Response.ok(tag).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
+    @POST
+    @Path("{tagId}/pin")
+    @Transactional
+    public Response addTaskTag(@PathParam("tagId") Long tagId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("taskId") Long taskId) {
+        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        Optional<BoardEntity> board = BoardEntity.findByIdOptional(boardId);
+        if (board.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
+        Optional<TagEntity> tag = board.get().tags.stream().filter(tagEntity -> tagEntity.id.equals(tagId)).findFirst();
+        if (tag.isPresent()) {
+            Optional<TaskEntity> task = TaskEntity.findByIdOptional(taskId);
+            if (task.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
+            task.get().tags.add(tag.get());
             return Response.ok(tag).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
