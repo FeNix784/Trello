@@ -14,8 +14,7 @@ public class UsersBoardsRolesService {
         UsersBoardsRolesEntity ubr = new UsersBoardsRolesEntity(user, board, role);
         UsersBoardsRolesEntity.persist(ubr);
         if (ubr.isPersistent()) {
-            //TODO пока ничего не возвращает, посколько при PUT выдает ошибку, должно вернуть board
-            return Response.ok().build();
+            return Response.ok(board).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
