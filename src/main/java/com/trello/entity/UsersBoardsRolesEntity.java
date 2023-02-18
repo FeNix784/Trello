@@ -31,7 +31,7 @@ public class UsersBoardsRolesEntity extends PanacheEntity {
         return ubrList.stream().map(ubr->ubr.board).collect(Collectors.toList());
     }
     public static List<UserEntity>  getUsersByBoardId(Long boardId){
-        List<UsersBoardsRolesEntity> ubrList = list("board_id", boardId);;
+        List<UsersBoardsRolesEntity> ubrList = list("board_id", boardId);
         return ubrList.stream().map(ubr->ubr.user).collect(Collectors.toList());
     }
     public static Role getRoleByUserAndBoardId(Long userId, Long boardId){
