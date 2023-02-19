@@ -121,7 +121,8 @@ public class TagController {
             if (board.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
             List<TaskEntity> tasksOnBoard = board.get().columns.stream().flatMap(columnEntity -> columnEntity.tasks.stream()).toList();
             tasksOnBoard.stream().map(taskEntity -> taskEntity.tags.removeIf(tagEntity -> tagEntity.id.equals(tagId)));
-            if (!board.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId))) return Response.status(Response.Status.NOT_FOUND).build();
+            if (!board.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId)))
+                return Response.status(Response.Status.NOT_FOUND).build();
             return Response.ok(Response.Status.OK).build();
 //            if (TagEntity.deleteById(tagId)) return Response.ok(Response.Status.OK).build();
 //            else return Response.status(Response.Status.BAD_REQUEST).build();
