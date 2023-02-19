@@ -7,7 +7,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Entity
@@ -17,11 +17,13 @@ public class BoardEntity extends PanacheEntity {
     //TODO: field limitation 12.02.2023
     public String title;
 
+
+    @OrderBy("position")
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     public List<ColumnEntity> columns = new CopyOnWriteArrayList<>();
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<TagEntity> tags = new CopyOnWriteArrayList<>();
+    public Set<TagEntity> tags = new HashSet<>();
 }
