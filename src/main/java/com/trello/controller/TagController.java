@@ -1,6 +1,7 @@
 package com.trello.controller;
 
 import com.trello.entity.*;
+import com.trello.service.BoardsTasksTagsService;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.transaction.Transactional;
@@ -27,8 +28,10 @@ public class TagController {
             if (board == null) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
-            board.tags.add(tag);
-            return Response.ok(tag).build();
+            BoardsTasksTagsEntity btt = new BoardsTasksTagsEntity(board, tag);
+//            board.tags.add(tag);
+//            return Response.ok(tag).build();
+            return BoardsTasksTagsService.addRecord(board, null, tag);
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -42,12 +45,15 @@ public class TagController {
         }
         Optional<BoardEntity> board = BoardEntity.findByIdOptional(boardId);
         if (board.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
-        Optional<TagEntity> tag = board.get().tags.stream().filter(tagEntity -> tagEntity.id.equals(tagId)).findFirst();
+//        Optional<TagEntity> tag = board.get().tags.stream().filter(tagEntity -> tagEntity.id.equals(tagId)).findFirst();
+        List<BoardsTasksTagsEntity> btt = BoardsTasksTagsEntity.list("board_id = ?1", boardId);
+        Optional<TagEntity> tag = btt.stream().filter(record -> record.tag.id.equals(tagId)).map(record -> record.tag).findFirst();
         if (tag.isPresent()) {
             Optional<TaskEntity> task = TaskEntity.findByIdOptional(taskId);
             if (task.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
-            task.get().tags.add(tag.get());
-            return Response.ok(tag).build();
+//            task.get().tags.add(tag.get());
+//            return Response.ok(tag).build();
+            return BoardsTasksTagsService.addRecord(board.get(), task.get(), tag.get());
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -57,9 +63,9 @@ public class TagController {
     public Response getTagById(@PathParam("tagId") Long tagId,
                                @QueryParam("userId") Long userId,
                                @QueryParam("boardId") Long boardId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId)) {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
+//        if (!UsersBoardsRolesEntity.isMember(userId, boardId)) {
+//            return Response.status(Response.Status.FORBIDDEN).build();
+//        }
         return TagEntity.findByIdOptional(tagId)
                 .map(tag -> Response.ok(tag).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).build());
@@ -74,9 +80,11 @@ public class TagController {
         if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
-        Optional<TaskEntity> task = TaskEntity.findByIdOptional(taskId);
-        if (task.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
-        Set<TagEntity> listTags = task.get().tags;
+//        Optional<TaskEntity> task = TaskEntity.findByIdOptional(taskId);
+//        if (task.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
+//        Set<TagEntity> listTags = task.get().tags;
+        List<BoardsTasksTagsEntity> bttList = BoardsTasksTagsEntity.list("task_id = ?1", taskId);
+        List<TagEntity> listTags = bttList.stream().map(record -> record.tag).toList();
         return Response.ok(listTags).build();
 
     }
@@ -87,8 +95,10 @@ public class TagController {
         if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
-        BoardEntity board = BoardEntity.findById(boardId);
-        Set<TagEntity> listTags = board.tags;
+//        BoardEntity board = BoardEntity.findById(boardId);
+//        Set<TagEntity> listTags = board.tags;
+        List<BoardsTasksTagsEntity> bttList = BoardsTasksTagsEntity.list("board_id = ?1", boardId);
+        List<TagEntity> listTags = bttList.stream().map(record -> record.tag).toList();
         return Response.ok(listTags).build();
     }
 
@@ -119,13 +129,12 @@ public class TagController {
         if (UsersBoardsRolesEntity.canChange(userId, boardId)) {
             Optional<BoardEntity> board = BoardEntity.findByIdOptional(boardId);
             if (board.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
-            List<TaskEntity> tasksOnBoard = board.get().columns.stream().flatMap(columnEntity -> columnEntity.tasks.stream()).toList();
-            tasksOnBoard.stream().map(taskEntity -> taskEntity.tags.removeIf(tagEntity -> tagEntity.id.equals(tagId)));
-            if (!board.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId)))
-                return Response.status(Response.Status.NOT_FOUND).build();
+            BoardsTasksTagsEntity.delete("board_id = ?1 and tag_id = ?2", boardId, tagId);
+//            List<TaskEntity> tasksOnBoard = board.get().columns.stream().flatMap(columnEntity -> columnEntity.tasks.stream()).toList();
+//            tasksOnBoard.stream().map(taskEntity -> taskEntity.tags.removeIf(tagEntity -> tagEntity.id.equals(tagId)));
+//            if (!board.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId)))
+//                return Response.status(Response.Status.NOT_FOUND).build();
             return Response.ok(Response.Status.OK).build();
-//            if (TagEntity.deleteById(tagId)) return Response.ok(Response.Status.OK).build();
-//            else return Response.status(Response.Status.BAD_REQUEST).build();
         } else return Response.status(Response.Status.FORBIDDEN).build();
     }
 
@@ -139,12 +148,16 @@ public class TagController {
         if (UsersBoardsRolesEntity.canChange(userId, boardId)) {
             Optional<TaskEntity> task = TaskEntity.findByIdOptional(taskId);
             if (task.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
-            Optional<TagEntity> tag = task.get().tags.stream().filter(tagEntity -> tagEntity.id.equals(tagId)).findFirst();
+            Optional<BoardEntity> board = BoardEntity.findByIdOptional(boardId);
+            if (board.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
+            Optional<TagEntity> tag = TagEntity.findByIdOptional(tagId);
             if (tag.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
-            task.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId));
+            BoardsTasksTagsEntity.delete("task_id = ?1 and tag_id = ?2", taskId, tagId);
+            BoardsTasksTagsEntity.persist(new BoardsTasksTagsEntity(board.get(), null, tag.get()));
+//            Optional<TagEntity> tag = task.get().tags.stream().filter(tagEntity -> tagEntity.id.equals(tagId)).findFirst();
+//            if (tag.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
+//            task.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId));
             return Response.ok(Response.Status.OK).build();
-//            if (TagEntity.deleteById(tagId)) return Response.ok(Response.Status.OK).build();
-//            else return Response.status(Response.Status.BAD_REQUEST).build();
         } else return Response.status(Response.Status.FORBIDDEN).build();
     }
 }
