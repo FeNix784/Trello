@@ -77,8 +77,6 @@ public class TagController {
         Optional<TaskEntity> task = TaskEntity.findByIdOptional(taskId);
         if (task.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
         Set<TagEntity> listTags = task.get().tags;
-        if (listTags.isEmpty())
-            return Response.status(Response.Status.NOT_FOUND).build();
         return Response.ok(listTags).build();
 
     }
@@ -91,8 +89,6 @@ public class TagController {
         }
         BoardEntity board = BoardEntity.findById(boardId);
         Set<TagEntity> listTags = board.tags;
-        if (listTags.isEmpty())
-            return Response.status(Response.Status.NOT_FOUND).build();
         return Response.ok(listTags).build();
     }
 
