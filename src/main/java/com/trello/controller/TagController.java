@@ -130,6 +130,7 @@ public class TagController {
             Optional<BoardEntity> board = BoardEntity.findByIdOptional(boardId);
             if (board.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
             BoardsTasksTagsEntity.delete("board_id = ?1 and tag_id = ?2", boardId, tagId);
+            TagEntity.delete("id = ?1", tagId);
 //            List<TaskEntity> tasksOnBoard = board.get().columns.stream().flatMap(columnEntity -> columnEntity.tasks.stream()).toList();
 //            tasksOnBoard.stream().map(taskEntity -> taskEntity.tags.removeIf(tagEntity -> tagEntity.id.equals(tagId)));
 //            if (!board.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId)))
