@@ -25,8 +25,10 @@ public class CommentController {
         if (comment.isPersistent()) {
             TaskEntity task = TaskEntity.findById(taskId);
             task.comments.add(comment);
+            comment.user = UserEntity.findById(userId);
+            return Response.ok(task).build();
         }
-        return Response.ok().build();
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @GET
@@ -53,12 +55,13 @@ public class CommentController {
     @Path("{commentId}")
     @Transactional
     public Response deleteComment(@PathParam("commentId") Long commentId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
-            return Response.status(Response.Status.FORBIDDEN).build();
         CommentEntity comment = CommentEntity.findById(commentId);
+        if (!UsersBoardsRolesEntity.isMember(userId, boardId) || !comment.user.id.equals(userId))
+            return Response.status(Response.Status.FORBIDDEN).build();
         if (comment != null) {
-            comment.delete();
-            return Response.ok(Response.Status.OK).build();
+            TaskEntity task = TaskEntity.find("select e from TaskEntity e inner join e.comments where comments_id = ?1", commentId).firstResult();
+            task.comments.remove(comment);
+            return Response.ok(task).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -67,9 +70,9 @@ public class CommentController {
     @Path("{commentId}")
     @Transactional
     public Response updateComment(CommentEntity comment, @PathParam("commentId") Long commentId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
-            return Response.status(Response.Status.FORBIDDEN).build();
         CommentEntity commentEntity = CommentEntity.findById(commentId);
+        if (!UsersBoardsRolesEntity.isMember(userId, boardId) || !commentEntity.user.id.equals(userId))
+            return Response.status(Response.Status.FORBIDDEN).build();
         if (comment != null) {
             commentEntity.date = comment.date;
             commentEntity.text = comment.text;
