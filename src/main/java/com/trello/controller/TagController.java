@@ -7,10 +7,7 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Path("/tags")
@@ -79,7 +76,7 @@ public class TagController {
         }
         Optional<TaskEntity> task = TaskEntity.findByIdOptional(taskId);
         if (task.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
-        List<TagEntity> listTags = task.get().tags;
+        Set<TagEntity> listTags = task.get().tags;
         if (listTags.isEmpty())
             return Response.status(Response.Status.NOT_FOUND).build();
         return Response.ok(listTags).build();
@@ -93,7 +90,7 @@ public class TagController {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         BoardEntity board = BoardEntity.findById(boardId);
-        List<TagEntity> listTags = board.tags;
+        Set<TagEntity> listTags = board.tags;
         if (listTags.isEmpty())
             return Response.status(Response.Status.NOT_FOUND).build();
         return Response.ok(listTags).build();
