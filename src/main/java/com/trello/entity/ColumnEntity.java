@@ -5,19 +5,15 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.*;
 
 @Entity
 public class ColumnEntity extends PanacheEntity {
-
-
 
     public String title;
 
     public Integer position;
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<TaskEntity> tasks;
-
-
+    public Set<TaskEntity> tasks = new HashSet<>();
 }
