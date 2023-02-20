@@ -76,4 +76,16 @@ public class BoardController {
             else return Response.status(Response.Status.BAD_REQUEST).build();
         } else return Response.status(Response.Status.FORBIDDEN).build();
     }
+
+    @DELETE
+    @Path("{boardId}/refuse")
+    @Transactional
+    public Response deleteUser(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId, @QueryParam("deleteUserId") Long deleteUserId) {
+        if (UsersBoardsRolesEntity.canChange(userId, boardId)) {
+            if (!UsersBoardsRolesEntity.isMember(deleteUserId, boardId))
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            UsersBoardsRolesEntity.delete("user_id = ?1 and board_id = ?2", deleteUserId, boardId);
+            return Response.ok(Response.Status.OK).build();
+        } else return Response.status(Response.Status.FORBIDDEN).build();
+    }
 }
