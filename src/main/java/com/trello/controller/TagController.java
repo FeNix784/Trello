@@ -1,12 +1,17 @@
 package com.trello.controller;
 
-import com.trello.entity.*;
+import com.trello.entity.BoardEntity;
+import com.trello.entity.TagEntity;
+import com.trello.entity.TaskEntity;
+import com.trello.entity.UsersBoardsRolesEntity;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Path("/tags")
 @Produces(MediaType.APPLICATION_JSON)
@@ -117,12 +122,14 @@ public class TagController {
         if (UsersBoardsRolesEntity.canChange(userId, boardId)) {
             Optional<BoardEntity> board = BoardEntity.findByIdOptional(boardId);
             if (board.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
-            List<TaskEntity> tasksOnBoard = board.get().columns.stream().flatMap(columnEntity -> columnEntity.tasks.stream()).toList();
-            tasksOnBoard.stream().map(taskEntity -> taskEntity.tags.removeIf(tagEntity -> tagEntity.id.equals(tagId)));
-            if (!board.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId))) return Response.status(Response.Status.NOT_FOUND).build();
+            Set<TaskEntity> tasksOnBoard = board.get().columns.stream().flatMap(columnEntity -> columnEntity.tasks.stream()).collect(Collectors.toSet());
+            tasksOnBoard.forEach(task -> {
+                task.tags.removeIf(tag -> tag.id.equals(tagId));
+            });
+            if (!board.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId)))
+                return Response.status(Response.Status.NOT_FOUND).build();
+//
             return Response.ok(Response.Status.OK).build();
-//            if (TagEntity.deleteById(tagId)) return Response.ok(Response.Status.OK).build();
-//            else return Response.status(Response.Status.BAD_REQUEST).build();
         } else return Response.status(Response.Status.FORBIDDEN).build();
     }
 
@@ -140,8 +147,6 @@ public class TagController {
             if (tag.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
             task.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId));
             return Response.ok(Response.Status.OK).build();
-//            if (TagEntity.deleteById(tagId)) return Response.ok(Response.Status.OK).build();
-//            else return Response.status(Response.Status.BAD_REQUEST).build();
         } else return Response.status(Response.Status.FORBIDDEN).build();
     }
 }
