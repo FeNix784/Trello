@@ -7,6 +7,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path("/tasks")
@@ -86,5 +87,36 @@ public class TaskController {
         if (taskEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
         taskEntity.makers.add(UserEntity.findById(userId));
         return Response.ok(taskEntity).build();
+    }
+
+    @PUT
+    @Transactional
+    @Path("{takId}/{newPosition}")
+    public Response changeTaskPositionOnBoard(@PathParam("takId") Long takId, @PathParam("newPosition") Integer newPosition, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
+        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+            return Response.status(Response.Status.FORBIDDEN).build();
+        Optional<ColumnEntity> column = ColumnEntity.findByIdOptional(columnId);
+        if (column.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+        Optional<TaskEntity> task = TaskEntity.findByIdOptional(takId);
+        if (task.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+        if (task.get().position < newPosition) {
+            column.get().tasks.stream().filter(taskEntity -> {
+                if (taskEntity.position > task.get().position && taskEntity.position <= newPosition) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }).forEach(taskEntity -> taskEntity.position -= 1);
+        } else {
+            column.get().tasks.stream().filter(taskEntity -> {
+                if (taskEntity.position < task.get().position && taskEntity.position >= newPosition) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }).forEach(taskEntity -> taskEntity.position += 1);
+        }
+        task.get().position = newPosition;
+        return Response.ok(task).build();
     }
 }
