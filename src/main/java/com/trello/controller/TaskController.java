@@ -7,6 +7,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path("/tasks")
@@ -87,4 +88,24 @@ public class TaskController {
         taskEntity.makers.add(UserEntity.findById(userId));
         return Response.ok(taskEntity).build();
     }
+
+    @PUT
+    @Transactional
+    @Path("{taskId}/{columnId}")
+    public Response dragAndDrop(@PathParam("taskId") Long taskId, @PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long newColumnId) {
+        if (!UsersBoardsRolesEntity.isMember(userId, boardId)) return Response.status(Response.Status.FORBIDDEN).build();
+        Optional<ColumnEntity> newColumn = ColumnEntity.findByIdOptional(newColumnId);
+        if (newColumn.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+        Optional<ColumnEntity> column = ColumnEntity.findByIdOptional(columnId);
+        if (column.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+        Optional<TaskEntity> task = TaskEntity.findByIdOptional(taskId);
+        if (task.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+        newColumn.get().tasks.add(task.get());
+        column.get().tasks.removeIf(taskEntity -> taskEntity.id.equals(taskId));
+        return Response.ok(task.get()).build();
+    }
+
+//    @PUT
+//    @Transactional
+//    @Path("{taskId}/move")
 }
