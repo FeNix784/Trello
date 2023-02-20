@@ -87,16 +87,4 @@ public class TaskController {
         taskEntity.makers.add(UserEntity.findById(userId));
         return Response.ok(taskEntity).build();
     }
-
-    @PUT
-    @Transactional
-    @Path("{taskId}/tags")
-    public Response addTag(@PathParam("taskId") Long taskId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("tagId") Long tagId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
-            return Response.status(Response.Status.FORBIDDEN).build();
-        TaskEntity taskEntity = TaskEntity.findById(taskId);
-        if (taskEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
-        taskEntity.tags.add(TagEntity.findById(tagId));
-        return Response.ok(taskEntity).build();
-    }
 }
