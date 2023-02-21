@@ -61,7 +61,7 @@ public class TaskController {
         if (column == null) return Response.status(Response.Status.BAD_REQUEST).build();
         column.tasks.removeIf(taskEntity -> taskEntity.id.equals(taskId));
         TaskEntity.deleteById(taskId);
-        return Response.ok().build();
+        return Response.ok(column).build();
     }
 
     @PUT
@@ -83,8 +83,24 @@ public class TaskController {
         if (!UsersBoardsRolesEntity.isMember(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         TaskEntity taskEntity = TaskEntity.findById(taskId);
-        if (taskEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
-        taskEntity.makers.add(UserEntity.findById(userId));
+        if (taskEntity == null) return Response.status(Response.Status.BAD_REQUEST).build();
+        UserEntity user = UserEntity.findById(userId);
+        if (user == null) return Response.status(Response.Status.BAD_REQUEST).build();
+        taskEntity.makers.add(user);
+        return Response.ok(taskEntity).build();
+    }
+
+    @DELETE
+    @Transactional
+    @Path("{taskId}/makers")
+    public Response deleteMakers(@PathParam("taskId") Long taskId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
+        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+            return Response.status(Response.Status.FORBIDDEN).build();
+        TaskEntity taskEntity = TaskEntity.findById(taskId);
+        if (taskEntity == null) return Response.status(Response.Status.BAD_REQUEST).build();
+        UserEntity user = UserEntity.findById(userId);
+        if (!taskEntity.makers.contains(user)) return Response.status(Response.Status.BAD_REQUEST).build();
+        taskEntity.makers.remove(user);
         return Response.ok(taskEntity).build();
     }
 }
