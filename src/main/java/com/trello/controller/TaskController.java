@@ -25,6 +25,7 @@ public class TaskController {
         if (task.isPersistent()) {
             ColumnEntity column = ColumnEntity.findById(columnId);
             if (column == null) return Response.status(Response.Status.BAD_REQUEST).build();
+            task.position = column.tasks.size();
             column.tasks.add(task);
             task.makers.add(UserEntity.findById(userId));
             return Response.ok(task).build();
@@ -48,7 +49,7 @@ public class TaskController {
             return Response.status(Response.Status.FORBIDDEN).build();
         ColumnEntity column = ColumnEntity.findById(columnId);
         if (column != null)
-            return Response.ok(column.tasks.stream().sorted(Comparator.comparing(o -> o.position)).collect(Collectors.toList())).build();
+            return Response.ok(column.tasks.stream().sorted(Comparator.comparingInt(o -> o.position)).toList()).build();
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
@@ -119,4 +120,19 @@ public class TaskController {
         task.get().position = newPosition;
         return Response.ok(task).build();
     }
+
+//    @PUT
+//    @Transactional
+//    @Path("{takId}/{newPosition}")
+//    public Response changeTaskPositionOnBoard(@PathParam("takId") Long takId, @PathParam("newPosition") Integer newPosition, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
+//        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+//            return Response.status(Response.Status.FORBIDDEN).build();
+//        Optional<ColumnEntity> column = ColumnEntity.findByIdOptional(columnId);
+//        if (column.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+//        Optional<TaskEntity> task = TaskEntity.findByIdOptional(takId);
+//        if (task.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+//        column.get().tasks.remove(task.get());
+//        column.get().tasks.add(newPosition, task.get());
+//        return Response.ok(task).build();
+//    }
 }
