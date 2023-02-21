@@ -21,7 +21,7 @@ public class BoardEntity extends PanacheEntity {
     @OrderBy("position")
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public Set<ColumnEntity> columns = new HashSet<>();
+    public List<ColumnEntity> columns = new LinkedList<>();
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

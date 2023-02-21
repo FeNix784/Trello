@@ -7,7 +7,8 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
+import java.util.*;
+import java.util.stream.IntStream;
 
 
 @Path("/columns")
@@ -28,6 +29,7 @@ public class ColumnController {
             if (board == null) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
+            column.position = board.columns.size() + 1;
             board.columns.add(column);
             return Response.ok(column).build();
         }
@@ -35,10 +37,12 @@ public class ColumnController {
     }
 
     @PUT
+    @Transactional
     @Path("pos/{columnId}")
     public Response updateColumnPosition(ColumnEntity columnFromRequest, @PathParam("columnId") Long columnId,
                                  @QueryParam("userId") Long userId,
                                  @QueryParam("boardId") Long boardId) {
+
         ColumnEntity columnFromColumnId = ColumnEntity.findById(columnId);
         BoardEntity board = BoardEntity.findById(boardId);
 
@@ -48,8 +52,16 @@ public class ColumnController {
         if (columnFromRequest == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+        if(!ColumnEntity.canReplacePosition(columnId,boardId)){
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        if(columnFromRequest.position < 1 || columnFromRequest.position > board.columns.size()){
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
 
-        board.columns.toArray();
+        ColumnEntity columnEntityReplaced = board.columns.remove(columnFromColumnId.position - 1);
+        board.columns.add(columnFromRequest.position - 1, columnEntityReplaced);
+        IntStream.range(0, board.columns.size()).forEach(i -> board.columns.get(i).position = board.columns.indexOf(board.columns.get(i)) + 1);
 
         return Response.ok(board).build();
     }
@@ -59,7 +71,7 @@ public class ColumnController {
     @Transactional
     @Path("{columnId}")
     public Response getColumnById(@QueryParam("userId") Long userId ,
-                                  @QueryParam("columnId") Long columnId,
+                                  @PathParam("columnId") Long columnId,
                                   @QueryParam("boardId") Long boardId) {
 
         if(!UsersBoardsRolesEntity.canChange(userId, boardId)){
