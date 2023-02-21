@@ -1,6 +1,9 @@
 package com.trello.controller;
 
-import com.trello.entity.*;
+import com.trello.entity.ColumnEntity;
+import com.trello.entity.TaskEntity;
+import com.trello.entity.UserEntity;
+import com.trello.entity.UsersBoardsRolesEntity;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -8,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Comparator;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Path("/tasks")
 @Produces(MediaType.APPLICATION_JSON)
@@ -108,7 +110,7 @@ public class TaskController {
 
     @PUT
     @Transactional
-    @Path("{takId}/{newPosition}")
+    @Path("{takId}/flip/{newPosition}")
     public Response changeTaskPositionOnBoard(@PathParam("takId") Long takId, @PathParam("newPosition") Integer newPosition, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
         if (!UsersBoardsRolesEntity.isMember(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -156,7 +158,8 @@ public class TaskController {
     @Transactional
     @Path("{taskId}/{columnId}")
     public Response dragAndDrop(@PathParam("taskId") Long taskId, @PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long newColumnId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId)) return Response.status(Response.Status.FORBIDDEN).build();
+        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+            return Response.status(Response.Status.FORBIDDEN).build();
         Optional<ColumnEntity> newColumn = ColumnEntity.findByIdOptional(newColumnId);
         if (newColumn.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
         Optional<ColumnEntity> column = ColumnEntity.findByIdOptional(columnId);
@@ -168,7 +171,4 @@ public class TaskController {
         return Response.ok(task.get()).build();
     }
 
-//    @PUT
-//    @Transactional
-//    @Path("{taskId}/move")
 }
