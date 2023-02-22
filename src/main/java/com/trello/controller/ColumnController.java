@@ -85,6 +85,7 @@ public class ColumnController {
     }
 
     @PUT
+    @Transactional
     @Path("{columnId}")
     public Response updateColumn(ColumnEntity column, @PathParam("columnId") Long columnId,
                                  @QueryParam("userId") Long userId,
