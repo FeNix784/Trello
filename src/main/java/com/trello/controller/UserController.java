@@ -1,7 +1,7 @@
 package com.trello.controller;
 
+import com.trello.entity.BoardEntity;
 import com.trello.entity.UserEntity;
-import com.trello.entity.UsersBoardsRolesEntity;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -42,10 +42,13 @@ public class UserController {
     @Path("{id}")
     @Transactional
     public Response deleteUserById(@PathParam("id") Long id) {
-        List<UsersBoardsRolesEntity> urb = UsersBoardsRolesEntity.list("user_id = ?1 and role = 0", id);
-        urb.forEach(record -> {
-            record.delete();
-            record.board.delete();
+        List<BoardEntity> boards = BoardEntity.getListBoardsByUserId(id);
+        boards.forEach(board -> {
+            if(BoardEntity.canDelete(id,board.id)){
+                board.delete();
+            }
+            board.usersRoles.remove(id);
+            board.delete();
         });
         if (UserEntity.deleteById(id)) {
             return Response.status(Response.Status.OK).build();

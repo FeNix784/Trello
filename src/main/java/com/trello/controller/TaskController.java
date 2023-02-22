@@ -1,6 +1,9 @@
 package com.trello.controller;
 
-import com.trello.entity.*;
+import com.trello.entity.BoardEntity;
+import com.trello.entity.ColumnEntity;
+import com.trello.entity.TaskEntity;
+import com.trello.entity.UserEntity;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -18,7 +21,7 @@ public class TaskController {
     @POST
     @Transactional
     public Response createTask(TaskEntity task, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId))
+        if (!BoardEntity.canChange(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         TaskEntity.persist(task);
         if (task.isPersistent()) {
@@ -34,7 +37,7 @@ public class TaskController {
     @GET
     @Path("{taskId}")
     public Response getById(@PathParam("taskId") Long taskId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+        if (!BoardEntity.isMember(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         TaskEntity task = TaskEntity.findById(taskId);
         if (task != null) return Response.ok(task).build();
@@ -43,7 +46,7 @@ public class TaskController {
 
     @GET
     public Response getByColumnId(@QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+        if (!BoardEntity.isMember(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         ColumnEntity column = ColumnEntity.findById(columnId);
         if (column != null)
@@ -55,7 +58,7 @@ public class TaskController {
     @Transactional
     @Path("{taskId}")
     public Response deleteById(@PathParam("taskId") Long taskId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId))
+        if (!BoardEntity.canChange(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         ColumnEntity column = ColumnEntity.findById(columnId);
         if (column == null) return Response.status(Response.Status.BAD_REQUEST).build();
@@ -68,7 +71,7 @@ public class TaskController {
     @Transactional
     @Path("{taskId}")
     public Response updateById(TaskEntity task, @PathParam("taskId") Long taskId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId))
+        if (!BoardEntity.canChange(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         TaskEntity taskEntity = TaskEntity.findById(taskId);
         if (taskEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
@@ -80,7 +83,7 @@ public class TaskController {
     @Transactional
     @Path("{taskId}/makers")
     public Response addMakers(@PathParam("taskId") Long taskId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+        if (!BoardEntity.isMember(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         TaskEntity taskEntity = TaskEntity.findById(taskId);
         if (taskEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
