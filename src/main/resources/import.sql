@@ -1,3 +1,9 @@
+insert into roleentity (id,role) values (0, 'CREATOR' );
+insert into roleentity (id,role) values (1, 'ADMIN' );
+insert into roleentity (id,role) values (2,'USER' );
+
+
+
 -- This file allow to write SQL commands that will be emitted in test and dev.
 -- The commands are commented as their support depends of the database
 -- insert into myentity (id, field) values(nextval('hibernate_sequence'), 'field-1');

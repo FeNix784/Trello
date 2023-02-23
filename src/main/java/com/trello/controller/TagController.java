@@ -3,7 +3,6 @@ package com.trello.controller;
 import com.trello.entity.BoardEntity;
 import com.trello.entity.TagEntity;
 import com.trello.entity.TaskEntity;
-import com.trello.entity.UsersBoardsRolesEntity;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -22,7 +21,7 @@ public class TagController {
     @Transactional
     public Response createTag(TagEntity tag, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
         TagEntity.persist(tag);
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
+        if (!BoardEntity.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         if (tag.isPersistent()) {
@@ -40,7 +39,7 @@ public class TagController {
     @Path("{tagId}/pin")
     @Transactional
     public Response addTaskTag(@PathParam("tagId") Long tagId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("taskId") Long taskId) {
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
+        if (!BoardEntity.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         Optional<BoardEntity> board = BoardEntity.findByIdOptional(boardId);
@@ -60,7 +59,7 @@ public class TagController {
     public Response getTagById(@PathParam("tagId") Long tagId,
                                @QueryParam("userId") Long userId,
                                @QueryParam("boardId") Long boardId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId)) {
+        if (!BoardEntity.isMember(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         return TagEntity.findByIdOptional(tagId)
@@ -74,7 +73,7 @@ public class TagController {
     public Response getTagsByTaskId(@QueryParam("userId") Long userId,
                                     @QueryParam("boardId") Long boardId,
                                     @QueryParam("taskId") Long taskId) {
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
+        if (!BoardEntity.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         Optional<TaskEntity> task = TaskEntity.findByIdOptional(taskId);
@@ -87,7 +86,7 @@ public class TagController {
     @GET
     @Path("/board")
     public Response getTagsByBoardId(@QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
+        if (!BoardEntity.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         BoardEntity board = BoardEntity.findById(boardId);
@@ -101,7 +100,7 @@ public class TagController {
     public Response updateTag(TagEntity tag, @PathParam("tagId") Long tagId,
                               @QueryParam("userId") Long userId,
                               @QueryParam("boardId") Long boardId) {
-        if (!UsersBoardsRolesEntity.canChange(userId, boardId)) {
+        if (!BoardEntity.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         TagEntity entity = TagEntity.findById(tagId);
@@ -119,13 +118,11 @@ public class TagController {
     public Response deleteBoardTag(@PathParam("tagId") Long tagId,
                                    @QueryParam("userId") Long userId,
                                    @QueryParam("boardId") Long boardId) {
-        if (UsersBoardsRolesEntity.canChange(userId, boardId)) {
+        if (BoardEntity.canChange(userId, boardId)) {
             Optional<BoardEntity> board = BoardEntity.findByIdOptional(boardId);
             if (board.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
             Set<TaskEntity> tasksOnBoard = board.get().columns.stream().flatMap(columnEntity -> columnEntity.tasks.stream()).collect(Collectors.toSet());
-            tasksOnBoard.forEach(task -> {
-                task.tags.removeIf(tag -> tag.id.equals(tagId));
-            });
+            tasksOnBoard.forEach(task -> task.tags.removeIf(tag -> tag.id.equals(tagId)));
             if (!board.get().tags.removeIf(tagEntity -> tagEntity.id.equals(tagId)))
                 return Response.status(Response.Status.NOT_FOUND).build();
 //
@@ -140,7 +137,7 @@ public class TagController {
                                   @QueryParam("userId") Long userId,
                                   @QueryParam("boardId") Long boardId,
                                   @QueryParam("taskId") Long taskId) {
-        if (UsersBoardsRolesEntity.canChange(userId, boardId)) {
+        if (BoardEntity.canChange(userId, boardId)) {
             Optional<TaskEntity> task = TaskEntity.findByIdOptional(taskId);
             if (task.isEmpty()) return Response.status(Response.Status.BAD_REQUEST).build();
             Optional<TagEntity> tag = task.get().tags.stream().filter(tagEntity -> tagEntity.id.equals(tagId)).findFirst();
