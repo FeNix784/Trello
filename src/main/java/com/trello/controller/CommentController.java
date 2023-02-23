@@ -27,6 +27,7 @@ public class CommentController {
         CommentEntity.persist(comment);
         if (comment.isPersistent()) {
             TaskEntity task = TaskEntity.findById(taskId);
+            if (task == null) return Response.status(Response.Status.BAD_REQUEST).build();
             task.comments.add(comment);
             comment.user = UserEntity.findById(userId);
             return Response.ok(task).build();

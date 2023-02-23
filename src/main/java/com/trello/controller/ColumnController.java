@@ -23,7 +23,6 @@ public class ColumnController {
         ColumnEntity.persist(column);
         if (!BoardEntity.canChange(userId, boardId))
             return Response.status(Response.Status.BAD_REQUEST).build();
-        }
         if (column.isPersistent()) {
             BoardEntity board = BoardEntity.findById(boardId);
             if (board == null) {
@@ -46,7 +45,7 @@ public class ColumnController {
         ColumnEntity columnFromColumnId = ColumnEntity.findById(columnId);
         BoardEntity board = BoardEntity.findById(boardId);
 
-        if(!UsersBoardsRolesEntity.canChange(userId,boardId)){
+        if(!BoardEntity.canChange(userId,boardId)){
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         if (columnFromRequest == null) {
@@ -73,7 +72,6 @@ public class ColumnController {
     public Response getColumnById(@PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
         if (!BoardEntity.canChange(userId, boardId))
             return Response.status(Response.Status.BAD_REQUEST).build();
-        }
         return ColumnEntity.findByIdOptional(columnId)
                 .map(column -> Response.ok(column).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).build());

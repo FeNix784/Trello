@@ -98,7 +98,7 @@ public class TaskController {
     @Transactional
     @Path("{taskId}/makers")
     public Response deleteMakers(@PathParam("taskId") Long taskId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+        if (!BoardEntity.isMember(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         TaskEntity taskEntity = TaskEntity.findById(taskId);
         if (taskEntity == null) return Response.status(Response.Status.BAD_REQUEST).build();
@@ -112,28 +112,16 @@ public class TaskController {
     @Transactional
     @Path("{takId}/flip/{newPosition}")
     public Response changeTaskPositionOnBoard(@PathParam("takId") Long takId, @PathParam("newPosition") Integer newPosition, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+        if (!BoardEntity.isMember(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         Optional<ColumnEntity> column = ColumnEntity.findByIdOptional(columnId);
         if (column.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
         Optional<TaskEntity> task = TaskEntity.findByIdOptional(takId);
         if (task.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
         if (task.get().position < newPosition) {
-            column.get().tasks.stream().filter(taskEntity -> {
-                if (taskEntity.position > task.get().position && taskEntity.position <= newPosition) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }).forEach(taskEntity -> taskEntity.position -= 1);
+            column.get().tasks.stream().filter(taskEntity -> taskEntity.position > task.get().position && taskEntity.position <= newPosition).forEach(taskEntity -> taskEntity.position -= 1);
         } else {
-            column.get().tasks.stream().filter(taskEntity -> {
-                if (taskEntity.position < task.get().position && taskEntity.position >= newPosition) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }).forEach(taskEntity -> taskEntity.position += 1);
+            column.get().tasks.stream().filter(taskEntity -> taskEntity.position < task.get().position && taskEntity.position >= newPosition).forEach(taskEntity -> taskEntity.position += 1);
         }
         task.get().position = newPosition;
         return Response.ok(task).build();
@@ -158,7 +146,7 @@ public class TaskController {
     @Transactional
     @Path("{taskId}/{columnId}")
     public Response dragAndDrop(@PathParam("taskId") Long taskId, @PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long newColumnId) {
-        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+        if (!BoardEntity.isMember(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         Optional<ColumnEntity> newColumn = ColumnEntity.findByIdOptional(newColumnId);
         if (newColumn.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
