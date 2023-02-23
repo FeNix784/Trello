@@ -10,7 +10,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Comparator;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Path("/tasks")
 @Produces(MediaType.APPLICATION_JSON)
@@ -27,6 +27,7 @@ public class TaskController {
         if (task.isPersistent()) {
             ColumnEntity column = ColumnEntity.findById(columnId);
             if (column == null) return Response.status(Response.Status.BAD_REQUEST).build();
+            task.position = column.tasks.size();
             column.tasks.add(task);
             task.makers.add(UserEntity.findById(userId));
             return Response.ok(task).build();
@@ -50,7 +51,7 @@ public class TaskController {
             return Response.status(Response.Status.FORBIDDEN).build();
         ColumnEntity column = ColumnEntity.findById(columnId);
         if (column != null)
-            return Response.ok(column.tasks.stream().sorted(Comparator.comparing(o -> o.position)).collect(Collectors.toList())).build();
+            return Response.ok(column.tasks.stream().sorted(Comparator.comparingInt(o -> o.position)).toList()).build();
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
@@ -64,7 +65,7 @@ public class TaskController {
         if (column == null) return Response.status(Response.Status.BAD_REQUEST).build();
         column.tasks.removeIf(taskEntity -> taskEntity.id.equals(taskId));
         TaskEntity.deleteById(taskId);
-        return Response.ok().build();
+        return Response.ok(column).build();
     }
 
     @PUT
@@ -86,8 +87,88 @@ public class TaskController {
         if (!BoardEntity.isMember(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         TaskEntity taskEntity = TaskEntity.findById(taskId);
-        if (taskEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
-        taskEntity.makers.add(UserEntity.findById(userId));
+        if (taskEntity == null) return Response.status(Response.Status.BAD_REQUEST).build();
+        UserEntity user = UserEntity.findById(userId);
+        if (user == null) return Response.status(Response.Status.BAD_REQUEST).build();
+        taskEntity.makers.add(user);
         return Response.ok(taskEntity).build();
     }
+
+    @DELETE
+    @Transactional
+    @Path("{taskId}/makers")
+    public Response deleteMakers(@PathParam("taskId") Long taskId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
+        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+            return Response.status(Response.Status.FORBIDDEN).build();
+        TaskEntity taskEntity = TaskEntity.findById(taskId);
+        if (taskEntity == null) return Response.status(Response.Status.BAD_REQUEST).build();
+        UserEntity user = UserEntity.findById(userId);
+        if (!taskEntity.makers.contains(user)) return Response.status(Response.Status.BAD_REQUEST).build();
+        taskEntity.makers.remove(user);
+        return Response.ok(taskEntity).build();
+    }
+
+    @PUT
+    @Transactional
+    @Path("{takId}/flip/{newPosition}")
+    public Response changeTaskPositionOnBoard(@PathParam("takId") Long takId, @PathParam("newPosition") Integer newPosition, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
+        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+            return Response.status(Response.Status.FORBIDDEN).build();
+        Optional<ColumnEntity> column = ColumnEntity.findByIdOptional(columnId);
+        if (column.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+        Optional<TaskEntity> task = TaskEntity.findByIdOptional(takId);
+        if (task.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+        if (task.get().position < newPosition) {
+            column.get().tasks.stream().filter(taskEntity -> {
+                if (taskEntity.position > task.get().position && taskEntity.position <= newPosition) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }).forEach(taskEntity -> taskEntity.position -= 1);
+        } else {
+            column.get().tasks.stream().filter(taskEntity -> {
+                if (taskEntity.position < task.get().position && taskEntity.position >= newPosition) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }).forEach(taskEntity -> taskEntity.position += 1);
+        }
+        task.get().position = newPosition;
+        return Response.ok(task).build();
+    }
+
+//    @PUT
+//    @Transactional
+//    @Path("{takId}/{newPosition}")
+//    public Response changeTaskPositionOnBoard(@PathParam("takId") Long takId, @PathParam("newPosition") Integer newPosition, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
+//        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+//            return Response.status(Response.Status.FORBIDDEN).build();
+//        Optional<ColumnEntity> column = ColumnEntity.findByIdOptional(columnId);
+//        if (column.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+//        Optional<TaskEntity> task = TaskEntity.findByIdOptional(takId);
+//        if (task.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+//        column.get().tasks.remove(task.get());
+//        column.get().tasks.add(newPosition, task.get());
+//        return Response.ok(task).build();
+//    }
+
+    @PUT
+    @Transactional
+    @Path("{taskId}/{columnId}")
+    public Response dragAndDrop(@PathParam("taskId") Long taskId, @PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long newColumnId) {
+        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
+            return Response.status(Response.Status.FORBIDDEN).build();
+        Optional<ColumnEntity> newColumn = ColumnEntity.findByIdOptional(newColumnId);
+        if (newColumn.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+        Optional<ColumnEntity> column = ColumnEntity.findByIdOptional(columnId);
+        if (column.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+        Optional<TaskEntity> task = TaskEntity.findByIdOptional(taskId);
+        if (task.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
+        newColumn.get().tasks.add(task.get());
+        column.get().tasks.removeIf(taskEntity -> taskEntity.id.equals(taskId));
+        return Response.ok(task.get()).build();
+    }
+
 }
