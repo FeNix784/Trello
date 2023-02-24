@@ -1,5 +1,7 @@
 package com.trello.chat;
 
+import com.trello.chat.encoders.ChatEntityDecoder;
+import com.trello.chat.encoders.ChatEntityEncoder;
 import com.trello.entity.BoardEntity;
 import com.trello.entity.ChatEntity;
 
@@ -17,7 +19,7 @@ import javax.websocket.Session;
 
 
 
-@ServerEndpoint("/chat/{boardId}/{userId}")
+@ServerEndpoint(value = "/chat/{boardId}/{userId}", decoders = ChatEntityDecoder.class, encoders = ChatEntityEncoder.class)
 @ApplicationScoped
 public class ChatSocket {
 
@@ -46,13 +48,14 @@ public class ChatSocket {
     }
 
     @OnMessage
-    public void onMessage(String message, @PathParam("boardId") Long boardId, @PathParam("userId") Long userId) {
-        if (message.equalsIgnoreCase("_ready_")) {
-            broadcast("User " + userId + " joined");
+    public void onMessage(ChatEntity chatEntity, @PathParam("boardId") Long boardId, @PathParam("userId") Long userId) {
+        if (chatEntity.message.equalsIgnoreCase("_ready_")) {
+            broadcast("User " + chatEntity.userId + " joined");
         } else {
-            broadcast(">> " + userId + ": " + message);
-            ChatEntity chat = new ChatEntity(boardId, userId, message, System.currentTimeMillis());
-            ChatEntity.persist(chat);
+//            ChatEntity chat = new ChatEntity(boardId, userId, chatEntity.message, System.currentTimeMillis());
+//            ChatEntity.persist(chat);
+            broadcast(">> " + chatEntity.userId + ": " + chatEntity.message);
+
         }
 
     }
