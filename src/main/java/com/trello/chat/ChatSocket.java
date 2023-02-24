@@ -1,6 +1,11 @@
 package com.trello.chat;
 
+import com.trello.entity.BoardEntity;
+import com.trello.entity.ChatEntity;
+
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -14,35 +19,35 @@ import javax.websocket.Session;
 
 
 
-@ServerEndpoint("/chat/{username}")
+@ServerEndpoint("/chat/{boardId}/{userId}")
 @ApplicationScoped
 public class ChatSocket {
 
-    Map<String, Session> sessions = new ConcurrentHashMap<>();
+    Map<Long, Session> sessions = new ConcurrentHashMap<>();
 
     @OnOpen
-    public void onOpen(Session session, @PathParam("username") String username) {
-        sessions.put(username, session);
+    public void onOpen(Session session, @PathParam("boardId") Long boardId, @PathParam("userId") Long userId) {
+        sessions.put(userId, session);
     }
 
     @OnClose
-    public void onClose(Session session, @PathParam("username") String username) {
-        sessions.remove(username);
-        broadcast("User " + username + " left");
+    public void onClose(Session session, @PathParam("userId") Long userId) {
+        sessions.remove(userId);
+        broadcast("User " + userId + " left");
     }
 
     @OnError
-    public void onError(Session session, @PathParam("username") String username, Throwable throwable) {
-        sessions.remove(username);
-        broadcast("User " + username + " left on error: " + throwable);
+    public void onError(Session session, @PathParam("userId") Long userId, Throwable throwable) {
+        sessions.remove(userId);
+        broadcast("User " + userId + " left on error: " + throwable);
     }
 
     @OnMessage
-    public void onMessage(String message, @PathParam("username") String username) {
+    public void onMessage(String message, @PathParam("boardId") Long boardId, @PathParam("userId") Long userId) {
         if (message.equalsIgnoreCase("_ready_")) {
-            broadcast("User " + username + " joined");
+            broadcast("User " + userId + " joined");
         } else {
-            broadcast(">> " + username + ": " + message);
+            broadcast(">> " + userId + ": " + message);
         }
     }
 
