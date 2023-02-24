@@ -14,12 +14,16 @@ public class ChatEntity extends PanacheEntity {
 
     public String message;
 
-    public Date date;
+    public Long date;
 
-    public ChatEntity(Long boardId, Long userId, String message, Date date) {
+    public ChatEntity(Long boardId, Long userId, String message, Long date) {
         this.boardId = boardId;
         this.userId = userId;
         this.message = message;
         this.date = date;
+    }
+
+    public ChatEntity() {
+
     }
 }
