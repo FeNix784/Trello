@@ -21,6 +21,7 @@ public class TaskController {
     public Response createTask(TaskEntity task, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
         if (!BoardEntity.canChange(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
+        task.tags = task.tags.stream().map(tag -> (TagEntity) TagEntity.findById(tag.id)).collect(Collectors.toSet());
         TaskEntity.persist(task);
         if (task.isPersistent()) {
             ColumnEntity column = ColumnEntity.findById(columnId);
