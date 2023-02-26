@@ -1,9 +1,6 @@
 package com.trello.controller;
 
-import com.trello.entity.BoardEntity;
-import com.trello.entity.ColumnEntity;
-import com.trello.entity.TaskEntity;
-import com.trello.entity.UserEntity;
+import com.trello.entity.*;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -11,6 +8,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Path("/tasks")
 @Produces(MediaType.APPLICATION_JSON)
@@ -23,6 +22,7 @@ public class TaskController {
     public Response createTask(TaskEntity task, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
         if (!BoardEntity.canChange(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
+        task.tags = task.tags.stream().map(tag -> (TagEntity) TagEntity.findById(tag.id)).collect(Collectors.toSet());
         TaskEntity.persist(task);
         if (task.isPersistent()) {
             ColumnEntity column = ColumnEntity.findById(columnId);
