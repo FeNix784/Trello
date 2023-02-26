@@ -19,4 +19,8 @@ public class UserEntity extends PanacheEntity {
     public String name;
     public String surname;
 
+    public String getFullName() {
+        return name + " " + surname;
+    }
+
 }
