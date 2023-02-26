@@ -1,10 +1,9 @@
 package com.trello.controller;
 
-import com.trello.entity.BoardEntity;
-import com.trello.entity.RoleEntity;
-import com.trello.entity.UserEntity;
+import com.trello.entity.*;
 import com.trello.records.BoardsTitlesRecord;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -42,6 +41,20 @@ public class BoardController {
         else return Response.status(Response.Status.NOT_FOUND).build();
     }
 
+    @GET
+    @Transactional
+    @Path("{boardId}/link")
+    public Response createLink(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId) {
+        if (BoardEntity.canChange(userId, boardId)) {
+            String shortId = RandomStringUtils.randomAlphanumeric(8);
+            while (LinkEntity.find("link", shortId).firstResult() != null) shortId = RandomStringUtils.randomAlphanumeric(8);
+            LinkEntity link = new LinkEntity(shortId, BoardEntity.findById(boardId));
+            LinkEntity.persist(link);
+            return Response.ok(link).build();
+        }
+        else return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+
     @PUT
     @Path("{boardId}")
     @Transactional
@@ -57,13 +70,11 @@ public class BoardController {
     @PUT
     @Path("{boardId}/invite")
     @Transactional
-    public Response addUser(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId, @QueryParam("newUserId") Long newUserId, @QueryParam("role") Long role) {
-        if (userId.equals(newUserId)) return Response.status(Response.Status.BAD_REQUEST).build();
+    public Response addUser(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId, @QueryParam("role") Long role) {
+        if (BoardEntity.isMember(userId, boardId)) return Response.status(Response.Status.BAD_REQUEST).build();
         BoardEntity board = BoardEntity.findById(boardId);
-        if (board == null) return Response.status(Response.Status.NOT_FOUND).build();
-        if (!board.canChange(userId))
-            return Response.status(Response.Status.FORBIDDEN).build();
-        UserEntity user = UserEntity.findById(newUserId);
+        if (board == null) return Response.status(Response.Status.BAD_REQUEST).build();
+        UserEntity user = UserEntity.findById(userId);
         if (user == null) return Response.status(Response.Status.BAD_REQUEST).build();
         board.usersRoles.put(user, RoleEntity.findById(role));
         return Response.ok(board).build();
@@ -73,7 +84,6 @@ public class BoardController {
     @Path("{boardId}")
     @Transactional
     public Response deleteBoard(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId) {
-
         if (BoardEntity.canDelete(userId, boardId)) {
             if (BoardEntity.deleteById(boardId)) return Response.ok(Response.Status.OK).build();
             else return Response.status(Response.Status.BAD_REQUEST).build();

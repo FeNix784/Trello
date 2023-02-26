@@ -26,8 +26,8 @@ public class TaskEntity extends PanacheEntity {
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("date")
     public Set<CommentEntity> comments = new HashSet<>();
-
 
     public void updateTask(String text, String description, Integer position, Set<UserEntity> makers, Set<TagEntity> tags, Set<CommentEntity> comments) {
         this.text = text;
