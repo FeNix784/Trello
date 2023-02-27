@@ -1,16 +1,15 @@
 package com.trello.controller;
 
-import com.trello.entity.BoardEntity;
-import com.trello.entity.ColumnEntity;
-import com.trello.entity.TaskEntity;
-import com.trello.entity.UserEntity;
+import com.trello.entity.*;
+import com.trello.enums.ActivityPatterns;
+import com.trello.enums.CommentType;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Comparator;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Path("/tasks")
 @Produces(MediaType.APPLICATION_JSON)
@@ -23,13 +22,15 @@ public class TaskController {
     public Response createTask(TaskEntity task, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
         if (!BoardEntity.canChange(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
+        task.tags = task.tags.stream().map(tag -> (TagEntity) TagEntity.findById(tag.id)).collect(Collectors.toSet());
         TaskEntity.persist(task);
         if (task.isPersistent()) {
             ColumnEntity column = ColumnEntity.findById(columnId);
             if (column == null) return Response.status(Response.Status.BAD_REQUEST).build();
             task.position = column.tasks.size();
             column.tasks.add(task);
-            task.makers.add(UserEntity.findById(userId));
+            UserEntity user = UserEntity.findById(userId);
+            task.comments.add(new CommentEntity(String.format(ActivityPatterns.ColumnAdding.getPattern(), user.getFullName(), column.title), new Date(), user, CommentType.System));
             return Response.ok(task).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -91,6 +92,7 @@ public class TaskController {
         UserEntity user = UserEntity.findById(userId);
         if (user == null) return Response.status(Response.Status.BAD_REQUEST).build();
         taskEntity.makers.add(user);
+        taskEntity.comments.add(new CommentEntity(String.format(ActivityPatterns.UserJoined.getPattern(), user.getFullName()), new Date(), user, CommentType.System));
         return Response.ok(taskEntity).build();
     }
 

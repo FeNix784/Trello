@@ -5,12 +5,14 @@ import com.trello.entity.BoardEntity;
 import com.trello.entity.CommentEntity;
 import com.trello.entity.TaskEntity;
 import com.trello.entity.UserEntity;
+import com.trello.enums.CommentType;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 
@@ -30,6 +32,8 @@ public class CommentController {
             if (task == null) return Response.status(Response.Status.BAD_REQUEST).build();
             task.comments.add(comment);
             comment.user = UserEntity.findById(userId);
+            comment.date = new Date();
+            comment.type = CommentType.Custom;
             return Response.ok(task).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
