@@ -17,7 +17,7 @@ public class TaskEntity extends PanacheEntity {
     public Integer position;
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     public Set<UserEntity> makers = new HashSet<>();
 
     @LazyCollection(LazyCollectionOption.FALSE)
