@@ -2,7 +2,6 @@ package com.trello.chat;
 
 import com.trello.chat.encoders.ChatEntityDecoder;
 import com.trello.chat.encoders.ChatEntityEncoder;
-import com.trello.entity.BoardEntity;
 import com.trello.entity.ChatEntity;
 
 import java.util.*;
@@ -28,11 +27,6 @@ public class ChatSocket {
     @OnOpen
     public void onOpen(Session session, @PathParam("boardId") Long boardId, @PathParam("userId") Long userId) {
         sessions.put(userId, session);
-//        BoardEntity board = BoardEntity.findById(boardId);
-//        List<ChatEntity> chatEntities = ChatEntity.find("boardId = ?1", boardId).list();
-//        for (ChatEntity chat : chatEntities) {
-//            broadcast(">> " + ChatEntity.userId + ": " + ChatEntity.message);
-//        }
     }
 
     @OnClose
@@ -52,10 +46,7 @@ public class ChatSocket {
         if (chatEntity.message.equalsIgnoreCase("_ready_")) {
             broadcast("User " + chatEntity.userId + " joined");
         } else {
-//            ChatEntity chat = new ChatEntity(boardId, userId, chatEntity.message, System.currentTimeMillis());
-//            ChatEntity.persist(chat);
             broadcast(">> " + chatEntity.userId + ": " + chatEntity.message);
-
         }
 
     }
