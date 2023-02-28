@@ -55,6 +55,8 @@ public class ChatSocket {
         if (chatEntity.message.equalsIgnoreCase("_ready_")) {
             broadcast("User " + chatEntity.userId + " joined");
         } else {
+            chatEntity.boardId = boardId;
+            chatEntity.userId = userId;
             chatEntity.date = System.currentTimeMillis();
             managedExecutor.submit(() -> {
                 try{
