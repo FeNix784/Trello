@@ -77,7 +77,7 @@ public class TaskController {
             return Response.status(Response.Status.FORBIDDEN).build();
         TaskEntity taskEntity = TaskEntity.findById(taskId);
         if (taskEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
-        taskEntity.updateTask(task.text, task.description, task.position, task.makers, task.tags, task.comments);
+        taskEntity.updateTask(task.text, task.description);
         return Response.ok(taskEntity).build();
     }
 

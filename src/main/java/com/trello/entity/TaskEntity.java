@@ -29,12 +29,8 @@ public class TaskEntity extends PanacheEntity {
     @OrderBy("date")
     public Set<CommentEntity> comments = new HashSet<>();
 
-    public void updateTask(String text, String description, Integer position, Set<UserEntity> makers, Set<TagEntity> tags, Set<CommentEntity> comments) {
+    public void updateTask(String text, String description) {
         this.text = text;
         this.description = description;
-        this.position = position;
-        this.makers = makers;
-        this.tags = tags;
-        this.comments = comments;
     }
 }
