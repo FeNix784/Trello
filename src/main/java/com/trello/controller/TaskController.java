@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @Consumes(MediaType.APPLICATION_JSON)
 public class TaskController {
 
-
     @POST
     @Transactional
     public Response createTask(TaskEntity task, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
@@ -129,25 +128,10 @@ public class TaskController {
         return Response.ok(task).build();
     }
 
-//    @PUT
-//    @Transactional
-//    @Path("{takId}/{newPosition}")
-//    public Response changeTaskPositionOnBoard(@PathParam("takId") Long takId, @PathParam("newPosition") Integer newPosition, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long columnId) {
-//        if (!UsersBoardsRolesEntity.isMember(userId, boardId))
-//            return Response.status(Response.Status.FORBIDDEN).build();
-//        Optional<ColumnEntity> column = ColumnEntity.findByIdOptional(columnId);
-//        if (column.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
-//        Optional<TaskEntity> task = TaskEntity.findByIdOptional(takId);
-//        if (task.isEmpty()) return Response.status(Response.Status.NOT_FOUND).build();
-//        column.get().tasks.remove(task.get());
-//        column.get().tasks.add(newPosition, task.get());
-//        return Response.ok(task).build();
-//    }
-
     @PUT
     @Transactional
     @Path("{taskId}/{columnId}")
-    public Response dragAndDrop(@PathParam("taskId") Long taskId, @PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("columnId") Long newColumnId) {
+    public Response dragAndDrop(@PathParam("taskId") Long taskId, @PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("newColumnId") Long newColumnId) {
         if (!BoardEntity.isMember(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         Optional<ColumnEntity> newColumn = ColumnEntity.findByIdOptional(newColumnId);
@@ -160,5 +144,4 @@ public class TaskController {
         column.get().tasks.removeIf(taskEntity -> taskEntity.id.equals(taskId));
         return Response.ok(task.get()).build();
     }
-
 }
