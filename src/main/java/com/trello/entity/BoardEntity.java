@@ -112,7 +112,7 @@ public class BoardEntity extends PanacheEntity {
         return BoardEntity.find("select e.id,e.title from BoardEntity e inner join e.usersRoles where usersroles_key = ?1", userId);
     }
     public static List<BoardEntity> getListBoardsByUserId(Long userId) {
-        return BoardEntity.list("select e from BoardEntity e inner join e.usersRoles where where usersroles_key = ?1", userId);
+        return BoardEntity.list("select e from BoardEntity e inner join e.usersRoles where usersroles_key = ?1", userId);
     }
 
 
