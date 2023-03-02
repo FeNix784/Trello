@@ -44,11 +44,11 @@ public class UserController {
     public Response deleteUserById(@PathParam("id") Long id) {
         List<BoardEntity> boards = BoardEntity.getListBoardsByUserId(id);
         boards.forEach(board -> {
-            if(BoardEntity.canDelete(id,board.id)){
+            if(BoardEntity.canDelete(id, board.id)){
                 board.delete();
             }
-            board.usersRoles.remove(id);
-            board.delete();
+            UserEntity user = UserEntity.findById(id);
+            board.usersRoles.remove(user);
         });
         if (UserEntity.deleteById(id)) {
             return Response.status(Response.Status.OK).build();
