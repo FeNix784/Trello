@@ -35,7 +35,7 @@ public class TagController {
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    @POST
+    @PUT
     @Path("{tagId}/pin")
     @Transactional
     public Response addTaskTag(@PathParam("tagId") Long tagId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId, @QueryParam("taskId") Long taskId) {
