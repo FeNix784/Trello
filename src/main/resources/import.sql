@@ -17,9 +17,7 @@ insert into columnentity(id, position, title) values (10,5,'DONE (ВЫПОЛНЕ
 insert into columnentity(id, position, title) values (11,6,'TESTS (ТЕСТЫ)');
 
 
-
-
-
+insert into boardentity_roleentity(boardentity_id, usersroles_id, usersroles_key) values (3, 0, 1);
 
 insert into columnentity(id, position, title) values (12,2,'col1');
 insert into columnentity(id, position, title) values (13,3,'col1');
@@ -245,7 +243,7 @@ insert into columnentity_taskentity(columnentity_id, tasks_id) VALUES (11,113);
 insert into columnentity_taskentity(columnentity_id, tasks_id) VALUES (11,114);
 insert into columnentity_taskentity(columnentity_id, tasks_id) VALUES (11,115);
 insert into columnentity_taskentity(columnentity_id, tasks_id) VALUES (13,116);
-insert into taskentity_userentity(taskentity_id, makers_id) VALUES (9,1);
+insert into taskentity_userentity(taskentity_id, makers_id) VALUES (14,1);
 
 
 
