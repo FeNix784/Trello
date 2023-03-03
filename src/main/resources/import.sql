@@ -245,6 +245,25 @@ insert into columnentity_taskentity(columnentity_id, tasks_id) VALUES (11,115);
 insert into columnentity_taskentity(columnentity_id, tasks_id) VALUES (13,116);
 insert into taskentity_userentity(taskentity_id, makers_id) VALUES (14,1);
 
+insert into tagentity(id, title, color) VALUES (117,'Analysis',0);
+insert into tagentity(id, title, color) VALUES (118,'Frontend',1);
+insert into tagentity(id, title, color) VALUES (119,'Backend',2);
+insert into tagentity(id, title, color) VALUES (120,'Priority task',3);
+insert into tagentity(id, title, color) VALUES (121,'Database',4);
+insert into tagentity(id, title, color) VALUES (122,'Bugfix',0);
+insert into tagentity(id, title, color) VALUES (123,'Testing',1);
+insert into tagentity(id, title, color) VALUES (124,'Non-priority task',2);
+
+insert into boardentity_tagentity(boardentity_id, tags_id) VALUES (3,117);
+insert into boardentity_tagentity(boardentity_id, tags_id) VALUES (3,118);
+insert into boardentity_tagentity(boardentity_id, tags_id) VALUES (3,119);
+insert into boardentity_tagentity(boardentity_id, tags_id) VALUES (3,120);
+insert into boardentity_tagentity(boardentity_id, tags_id) VALUES (3,121);
+insert into boardentity_tagentity(boardentity_id, tags_id) VALUES (3,122);
+insert into boardentity_tagentity(boardentity_id, tags_id) VALUES (3,123);
+insert into boardentity_tagentity(boardentity_id, tags_id) VALUES (3,124);
+
+
 
 
 
