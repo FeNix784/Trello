@@ -263,7 +263,8 @@ insert into boardentity_tagentity(boardentity_id, tags_id) VALUES (3,122);
 insert into boardentity_tagentity(boardentity_id, tags_id) VALUES (3,123);
 insert into boardentity_tagentity(boardentity_id, tags_id) VALUES (3,124);
 
-
+insert into taskentity_tagentity(taskentity_id, tags_id) VALUES (73,119);
+insert into taskentity_tagentity(taskentity_id, tags_id) VALUES (73,120);
 
 
 
