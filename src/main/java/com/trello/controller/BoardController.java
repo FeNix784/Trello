@@ -1,7 +1,9 @@
 package com.trello.controller;
 
+import com.google.gson.Gson;
 import com.trello.entity.*;
 import com.trello.entity.service.BoardService;
+import com.trello.records.BoardWithUsers;
 import com.trello.records.BoardsTitlesRecord;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -10,6 +12,7 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Set;
 
 @Path("/boards")
 @Produces(MediaType.APPLICATION_JSON)
@@ -38,7 +41,9 @@ public class BoardController {
     @GET
     @Path("{boardId}")
     public Response getBoardById(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId) {
-        if (BoardService.isMember(userId, boardId)) return Response.ok(BoardEntity.findById(boardId)).build();
+        BoardEntity board =  BoardEntity.findById(boardId);
+        BoardWithUsers boardWithUsers = new BoardWithUsers(board.id, board.title, board.columns, board.tags, board.usersRoles);
+        if (BoardService.isMember(userId, boardId)) return Response.ok(boardWithUsers).build();
         else return Response.status(Response.Status.NOT_FOUND).build();
     }
 
