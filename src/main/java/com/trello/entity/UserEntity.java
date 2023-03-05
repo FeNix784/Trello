@@ -3,12 +3,15 @@ package com.trello.entity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import java.util.Date;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class UserEntity extends PanacheEntity {
 
@@ -20,7 +23,9 @@ public class UserEntity extends PanacheEntity {
 
     public String name;
     public String surname;
-    public Date birthDate;
+
+    //public String avatar;
+
 
     public String getFullName() {
         return name + " " + surname;

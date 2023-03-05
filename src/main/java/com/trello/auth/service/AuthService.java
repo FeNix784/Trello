@@ -1,15 +1,46 @@
 package com.trello.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class AuthService {
 
+    String clientId;
+    String clientSecret;
+    public String getTokenByCode(String code){
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("grant_type", "authorization_code");
+        parameters.put("client_id", clientId);
+        parameters.put("client_secret", clientSecret);
+        parameters.put("code", code);
+        System.out.println(parameters);
+        Map<String, String> response = AuthService.request("https://oauth.yandex.ru/token", "POST", parameters);
+        if (response == null) return "";
+        return response.get("access_token");
+    }
+    public Map<String, String> getIdentifiedInfoByToken(String token){
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("format", "json");
+        parameters.put("oauth_token", token);
+        System.out.println(token);
+        Map<String, String> response = AuthService.request("https://login.yandex.ru/info", "GET", parameters);
+        if (response==null || response.isEmpty()) return new HashMap<>();
+
+        System.out.println(response);
+        return response;
+    }
     public static Map<String, String> request(String link, String type, Map<String, String> parameters) {
         HttpURLConnection connection = null;
         try {
