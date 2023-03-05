@@ -3,6 +3,7 @@ package com.trello.controller;
 
 import com.trello.entity.BoardEntity;
 import com.trello.entity.ColumnEntity;
+import com.trello.entity.service.BoardService;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -20,7 +21,7 @@ public class ColumnController {
     @Transactional
     public Response createColumn(ColumnEntity column,@QueryParam("userId") Long userId ,@QueryParam("boardId") Long boardId){
         ColumnEntity.persist(column);
-        if (!BoardEntity.canChange(userId, boardId))
+        if (!BoardService.canChange(userId, boardId))
             return Response.status(Response.Status.BAD_REQUEST).build();
         if (column.isPersistent()) {
             BoardEntity board = BoardEntity.findById(boardId);
@@ -44,7 +45,7 @@ public class ColumnController {
         ColumnEntity columnFromColumnId = ColumnEntity.findById(columnId);
         BoardEntity board = BoardEntity.findById(boardId);
 
-        if(!BoardEntity.canChange(userId,boardId)){
+        if(!BoardService.canChange(userId,boardId)){
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         if (columnFromRequest == null) {
@@ -69,7 +70,7 @@ public class ColumnController {
     @Transactional
     @Path("{columnId}")
     public Response getColumnById(@PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if (!BoardEntity.canChange(userId, boardId))
+        if (!BoardService.canChange(userId, boardId))
             return Response.status(Response.Status.BAD_REQUEST).build();
         return ColumnEntity.findByIdOptional(columnId)
                 .map(column -> Response.ok(column).build())
@@ -80,7 +81,7 @@ public class ColumnController {
     @Transactional
     @Path("{columnId}")
     public Response updateColumn(ColumnEntity column, @PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if (!BoardEntity.canChange(userId, boardId))
+        if (!BoardService.canChange(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         ColumnEntity columnEntity = ColumnEntity.findById(columnId);
         if (columnEntity == null) {
@@ -94,7 +95,7 @@ public class ColumnController {
     @Path("{columnId}")
     @Transactional
     public Response deleteColumn(@PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if (!BoardEntity.canChange(userId, boardId))
+        if (!BoardService.canChange(userId, boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         BoardEntity board = BoardEntity.findById(boardId);
         board.columns.removeIf(columnEntity -> columnEntity.id.equals(columnId));

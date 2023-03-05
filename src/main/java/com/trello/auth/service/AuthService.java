@@ -1,15 +1,45 @@
 package com.trello.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class AuthService {
 
+    String clientId;
+    String clientSecret;
+    public Map<String, String> getTokenParametersByCode(String code){
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("grant_type", "authorization_code");
+        parameters.put("client_id", clientId);
+        parameters.put("client_secret", clientSecret);
+        parameters.put("code", code);
+        System.out.println(parameters);
+        Map<String, String> response = AuthService.request("https://oauth.yandex.ru/token", "POST", parameters);
+        if (response == null) new ArrayList<>();
+        return response;
+    }
+    public Map<String, String> getIdentifiedInfoByToken(String token){
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("format", "json");
+        parameters.put("oauth_token", token);
+        System.out.println(token);
+        Map<String, String> response = AuthService.request("https://login.yandex.ru/info", "GET", parameters);
+        if (response==null || response.isEmpty()) return new HashMap<>();
+
+        response.replace("default_avatar_id","https://avatars.mds.yandex.net/get-yapic/"+response.get("default_avatar_id")+"/islands-retina-small");
+        return response;
+    }
     public static Map<String, String> request(String link, String type, Map<String, String> parameters) {
         HttpURLConnection connection = null;
         try {

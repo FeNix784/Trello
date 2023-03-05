@@ -1,12 +1,14 @@
 package com.trello.auth.controller;
 
+import com.trello.auth.entity.Account;
 import com.trello.auth.service.AuthService;
+import com.trello.entity.UserEntity;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -22,19 +24,31 @@ public class AuthController {
     String clientSecret;
 
     @GET
+    @Transactional
     public Response login(@QueryParam("code") String code) {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("grant_type", "authorization_code");
-        parameters.put("client_id", clientId);
-        parameters.put("client_secret", clientSecret);
-        parameters.put("code", code);
-        Map<String, String> response = AuthService.request("https://oauth.yandex.ru/token", "POST", parameters);
-        if (response == null) return Response.status(Response.Status.BAD_REQUEST).build();
-        String accessToken = response.get("access_token");
-        parameters = new HashMap<>();
-        parameters.put("format", "json");
-        parameters.put("oauth_token", accessToken);
-        response = AuthService.request("https://login.yandex.ru/info", "GET", parameters);
-        return Response.ok(response).build();
+        AuthService authService = new AuthService(clientId, clientSecret);
+
+        Map<String,String> tokenParams = authService.getTokenParametersByCode(code);
+        String token = tokenParams.get("access_token");
+        Long id = Long.valueOf(tokenParams.get("id"));
+
+
+        Map<String, String> userInfo = authService.getIdentifiedInfoByToken(token);
+        Account account = Account.find("id", id).firstResult();
+        //TODO: 1) Удаление истекших аккаунтов
+        //TODO: 2) Изменение данных пользователя
+        if (account == null) {
+            Account.persist(new Account(userInfo.get("default_email"), token, id));
+            UserEntity.persist(new UserEntity(userInfo.get("default_email"), userInfo.get("first_name"), userInfo.get("last_name"), userInfo.get("default_avatar_id"),id));
+            return Response.ok(UserEntity.find("email", userInfo.get("default_email")).firstResult()).build();
+        }
+
+        account.token = token;
+        account.email = userInfo.get("default_email");
+        UserEntity user = UserEntity.find("yandexID", id).firstResult();
+        user.email = userInfo.get("default_email");
+
+        return Response.ok(user).build();
+
     }
 }
