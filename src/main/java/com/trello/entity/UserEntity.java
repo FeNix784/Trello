@@ -24,7 +24,8 @@ public class UserEntity extends PanacheEntity {
     public String name;
     public String surname;
 
-    //public String avatar;
+    public String avatar;
+    public Long yandexID;
 
 
     public String getFullName() {

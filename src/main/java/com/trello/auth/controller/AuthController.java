@@ -26,21 +26,29 @@ public class AuthController {
     @GET
     @Transactional
     public Response login(@QueryParam("code") String code) {
-
         AuthService authService = new AuthService(clientId, clientSecret);
-        String token = authService.getTokenByCode(code);
-        Map<String, String> userInfo = authService.getIdentifiedInfoByToken(token);
-        Account account = Account.find("token", token).firstResult();
-        //TODO: 1) Удаление истекших аккаунтов
-        if (account == null) {
-            Account.persist(new Account(userInfo.get("default_email"), token));
-            if(UserEntity.find("email",userInfo.get("default_email"))==null) {
-                UserEntity.persist(new UserEntity(userInfo.get("default_email"), userInfo.get("first_name"), userInfo.get("last_name")/*, userInfo.get("default_avatar_id")*/));
-                return Response.ok(UserEntity.find("email",userInfo.get("default_email")).firstResult()).build();
-            }
 
+        Map<String,String> tokenParams = authService.getTokenParametersByCode(code);
+        String token = tokenParams.get("access_token");
+        Long id = Long.valueOf(tokenParams.get("id"));
+
+
+        Map<String, String> userInfo = authService.getIdentifiedInfoByToken(token);
+        Account account = Account.find("id", id).firstResult();
+        //TODO: 1) Удаление истекших аккаунтов
+        //TODO: 2) Изменение данных пользователя
+        if (account == null) {
+            Account.persist(new Account(userInfo.get("default_email"), token, id));
+            UserEntity.persist(new UserEntity(userInfo.get("default_email"), userInfo.get("first_name"), userInfo.get("last_name"), userInfo.get("default_avatar_id"),id));
+            return Response.ok(UserEntity.find("email", userInfo.get("default_email")).firstResult()).build();
         }
-        return Response.ok(UserEntity.find("email",userInfo.get("default_email")).firstResult()).build();
+
+        account.token = token;
+        account.email = userInfo.get("default_email");
+        UserEntity user = UserEntity.find("yandexID", id).firstResult();
+        user.email = userInfo.get("default_email");
+
+        return Response.ok(user).build();
 
     }
 }

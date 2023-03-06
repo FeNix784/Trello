@@ -10,8 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,7 +18,7 @@ public class AuthService {
 
     String clientId;
     String clientSecret;
-    public String getTokenByCode(String code){
+    public Map<String, String> getTokenParametersByCode(String code){
         Map<String, String> parameters = new HashMap<>();
         parameters.put("grant_type", "authorization_code");
         parameters.put("client_id", clientId);
@@ -27,8 +26,8 @@ public class AuthService {
         parameters.put("code", code);
         System.out.println(parameters);
         Map<String, String> response = AuthService.request("https://oauth.yandex.ru/token", "POST", parameters);
-        if (response == null) return "";
-        return response.get("access_token");
+        if (response == null) new ArrayList<>();
+        return response;
     }
     public Map<String, String> getIdentifiedInfoByToken(String token){
         Map<String, String> parameters = new HashMap<>();
@@ -38,7 +37,7 @@ public class AuthService {
         Map<String, String> response = AuthService.request("https://login.yandex.ru/info", "GET", parameters);
         if (response==null || response.isEmpty()) return new HashMap<>();
 
-        System.out.println(response);
+        response.replace("default_avatar_id","https://avatars.mds.yandex.net/get-yapic/"+response.get("default_avatar_id")+"/islands-retina-small");
         return response;
     }
     public static Map<String, String> request(String link, String type, Map<String, String> parameters) {

@@ -16,8 +16,9 @@ public class Account extends PanacheEntity {
     @Column(unique = true)
     public String email;
     public String token;
-    //public Long createDate;
-    //public Integer lifeTime;
+    public Long id;
+//    public Long tokenIssuance;
+//    public Long tokenLifeTime;
 
 
 }

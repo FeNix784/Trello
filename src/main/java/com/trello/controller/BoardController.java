@@ -1,6 +1,9 @@
 package com.trello.controller;
 
+import com.google.gson.Gson;
 import com.trello.entity.*;
+import com.trello.entity.service.BoardService;
+import com.trello.records.BoardWithUsers;
 import com.trello.records.BoardsTitlesRecord;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -9,6 +12,7 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Set;
 
 @Path("/boards")
 @Produces(MediaType.APPLICATION_JSON)
@@ -30,14 +34,16 @@ public class BoardController {
 
     @GET
     public Response getBoardsByUserID(@QueryParam("userId") Long userId) {
-        PanacheQuery<BoardsTitlesRecord> boards = BoardEntity.getBoardsByUserId(userId).project(BoardsTitlesRecord.class);
+        PanacheQuery<BoardsTitlesRecord> boards = BoardService.getBoardsByUserId(userId).project(BoardsTitlesRecord.class);
         return Response.ok(boards.list()).build();
     }
 
     @GET
     @Path("{boardId}")
     public Response getBoardById(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId) {
-        if (BoardEntity.isMember(userId, boardId)) return Response.ok(BoardEntity.findById(boardId)).build();
+        BoardEntity board =  BoardEntity.findById(boardId);
+        BoardWithUsers boardWithUsers = new BoardWithUsers(board.id, board.title, board.columns, board.tags, board.usersRoles);
+        if (BoardService.isMember(userId, boardId)) return Response.ok(boardWithUsers).build();
         else return Response.status(Response.Status.NOT_FOUND).build();
     }
 
@@ -45,7 +51,7 @@ public class BoardController {
     @Transactional
     @Path("{boardId}/link")
     public Response createLink(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId) {
-        if (BoardEntity.canChange(userId, boardId)) {
+        if (BoardService.canChange(userId, boardId)) {
             String shortId = RandomStringUtils.randomAlphanumeric(8);
             while (LinkEntity.find("link", shortId).firstResult() != null) shortId = RandomStringUtils.randomAlphanumeric(8);
             LinkEntity link = new LinkEntity(shortId, BoardEntity.findById(boardId));
@@ -54,6 +60,12 @@ public class BoardController {
         }
         else return Response.status(Response.Status.BAD_REQUEST).build();
     }
+    @GET
+    @Transactional
+    @Path("{boardId}/users")
+    public Response getUsers(@PathParam("boardId") Long boardId) {
+        return Response.ok(BoardService.getUsersByBoardId(boardId)).build();
+    }
 
     @PUT
     @Path("{boardId}")
@@ -61,7 +73,7 @@ public class BoardController {
     public Response updateBoard(BoardEntity board, @PathParam("boardId") Long boardId, @QueryParam("userId") Long userId) {
         BoardEntity boardEntity = BoardEntity.findById(boardId);
         if (boardEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
-        if (!boardEntity.canChange(userId))
+        if (!BoardService.canChange(userId,boardId))
             return Response.status(Response.Status.FORBIDDEN).build();
         boardEntity.title = board.title;
         return Response.ok(boardEntity).build();
@@ -71,7 +83,7 @@ public class BoardController {
     @Path("{boardId}/invite")
     @Transactional
     public Response addUser(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId, @QueryParam("role") Long role) {
-        if (BoardEntity.isMember(userId, boardId)) return Response.status(Response.Status.BAD_REQUEST).build();
+        if (BoardService.isMember(userId, boardId)) return Response.status(Response.Status.BAD_REQUEST).build();
         BoardEntity board = BoardEntity.findById(boardId);
         if (board == null) return Response.status(Response.Status.BAD_REQUEST).build();
         UserEntity user = UserEntity.findById(userId);
@@ -84,7 +96,7 @@ public class BoardController {
     @Path("{boardId}")
     @Transactional
     public Response deleteBoard(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId) {
-        if (BoardEntity.canDelete(userId, boardId)) {
+        if (BoardService.canDelete(userId, boardId)) {
             if (BoardEntity.deleteById(boardId)) return Response.ok(Response.Status.OK).build();
             else return Response.status(Response.Status.BAD_REQUEST).build();
         } else return Response.status(Response.Status.FORBIDDEN).build();
@@ -95,8 +107,8 @@ public class BoardController {
     @Path("{boardId}/refuse")
     @Transactional
     public Response deleteUser(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId, @QueryParam("deleteUserId") Long deleteUserId) {
-        if (BoardEntity.canChange(userId, boardId)) {
-            if (!BoardEntity.isMember(deleteUserId, boardId))
+        if (BoardService.canChange(userId, boardId)) {
+            if (!BoardService.isMember(deleteUserId, boardId))
                 return Response.status(Response.Status.BAD_REQUEST).build();
             BoardEntity board =BoardEntity.findById(boardId);
             UserEntity user = UserEntity.findById(deleteUserId);
