@@ -2,8 +2,8 @@ insert into roleentity (id,role) values (0, 'CREATOR' );
 insert into roleentity (id,role) values (1, 'ADMIN' );
 insert into roleentity (id,role) values (2,'USER' );
 
-insert into userentity (id, birthdate, email, name, surname)values (1,'12-03-2001', 'eee@.ss','Никита','Литвинков');
-insert into userentity (id, birthdate, email, name, surname)values (2,'11-01-2000', 'ee2e@.ss', 'Папаша','Карло');
+insert into userentity (id, email, name, surname)values (1, 'eee@.ss','Никита','Литвинков');
+insert into userentity (id,  email, name, surname)values (2, 'ee2e@.ss', 'Папаша','Карло');
 
 insert into boardentity (id,title) values (3,'board1');
 insert into boardentity (id,title) values (4,'board2');
