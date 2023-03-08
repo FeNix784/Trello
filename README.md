@@ -117,6 +117,7 @@ Front-end:
 * [![Axios][Axios]][Axios-url]
 * [![Zustand][Zustand]][Zustand-url]
 * [![Tailwind][Tailwind]][Tailwind-url]
+
 Back-end:
 * [![Java][Java]][Java-url]
 * [![Quarkus][Quarkus]][Quarkus-url]
@@ -125,6 +126,7 @@ Back-end:
 * [![Lombok][Lombok]][Lombok-url]
 * [![GSON][GSON]][Gson-url]
 * [![H2][H2]][H2-url]
+
 Common:
 * [![YandexID][YandexID]][YandexID-url]
 * [![Docker][docker]][docker-url]
