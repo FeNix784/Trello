@@ -306,7 +306,7 @@ Use this space to list resources you find helpful and would like to give credit 
 [YandexID-url]:https://yandex.ru/dev/id/doc/ru/
 [PostgreSQL]: https://img.shields.io/badge/postgres-%23316192.svg?&style=for-the-badge&logo=postgresql&logoColor=white
 [PostgreSQL-url]:https://www.postgresql.org/
-[H2]: images/h2_logo.png
+[H2]: images/H2_logo.png
 [H2-url]: https://ru.wikipedia.org/wiki/H2
 [docker]: https://img.shields.io/badge/docker%20-%230db7ed.svg?&style=for-the-badge&logo=docker&logoColor=white
 [docker-url]:https://www.docker.com/
