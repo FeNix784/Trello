@@ -296,26 +296,26 @@ Use this space to list resources you find helpful and would like to give credit 
 [JQuery-url]: https://jquery.com 
 [Java]: https://img.shields.io/badge/java-%23ED8B00.svg?&style=for-the-badge&logo=java&logoColor=white
 [Java-url]:https://www.java.com
-[Quarkus]: images/quarkus.svg
+[Quarkus]: images/quarkus.png
 [Quarkus-url]:https://quarkus.io/
-[Lombok]: images/lombok.svg
+[Lombok]: images/lombok.png
 [Lombok-url]:https://projectlombok.org/
-[GSON]: images/google.svg
+[GSON]: images/google.png
 [Gson-url]:https://www.sites.google.com/site/gson/gson-user-guide
-[YandexID]: images/ya_id_.gif
+[YandexID]: images/ya_id_.png
 [YandexID-url]:https://yandex.ru/dev/id/doc/ru/
 [PostgreSQL]: https://img.shields.io/badge/postgres-%23316192.svg?&style=for-the-badge&logo=postgresql&logoColor=white
 [PostgreSQL-url]:https://www.postgresql.org/
 [H2]: images/h2_logo.png
 [docker]: https://img.shields.io/badge/docker%20-%230db7ed.svg?&style=for-the-badge&logo=docker&logoColor=white
 [docker-url]:https://www.docker.com/
-[swagger]: images/swagger.svg
+[swagger]: images/swagger.png
 [swagger-url]:https://swagger.io/
-[postman]: images/postman.svg
+[postman]: images/postman.png
 [postman-url]:https://www.postman.com/
 [github]: https://img.shields.io/badge/github%20-%23121011.svg?&style=for-the-badge&logo=github&logoColor=white
 [github-url]:https://github.com/
-[hibernate]: images/hibernate.svg
+[hibernate]: images/hibernate.png
 [hibernate-url]:https://hibernate.org/
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
