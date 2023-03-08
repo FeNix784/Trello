@@ -1,3 +1,8 @@
+# Трелло
+
+
+
+# trello
 
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a name="readme-top"></a>
@@ -30,7 +35,7 @@
 
 <!-- PROJECT LOGO -->
 <br />
-<div align="center">ц
+<div align="center">
   <a href="https://github.com/FeNix784/Trello">
     <img src="images/logo.svg" alt="Logo" width="80" height="80">
   </a>
@@ -289,7 +294,7 @@ Use this space to list resources you find helpful and would like to give credit 
 [Bootstrap-url]: https://getbootstrap.com
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com 
-[Java]: images/Java_logo.svg
+[Java]: https://img.shields.io/badge/java-%23ED8B00.svg?&style=for-the-badge&logo=java&logoColor=white
 [Java-url]:https://www.java.com
 [Quarkus]: images/quarkus.svg
 [Quarkus-url]:https://quarkus.io/
@@ -299,16 +304,16 @@ Use this space to list resources you find helpful and would like to give credit 
 [Gson-url]:https://www.sites.google.com/site/gson/gson-user-guide
 [YandexID]: images/ya_id_.gif
 [YandexID-url]:https://yandex.ru/dev/id/doc/ru/
-[PostgreSQL]: images/ya_id_.gif
+[PostgreSQL]: https://img.shields.io/badge/postgres-%23316192.svg?&style=for-the-badge&logo=postgresql&logoColor=white
 [PostgreSQL-url]:https://www.postgresql.org/
 [H2]: images/h2_logo.png
-[docker]: images/docker.svg
+[docker]: https://img.shields.io/badge/docker%20-%230db7ed.svg?&style=for-the-badge&logo=docker&logoColor=white
 [docker-url]:https://www.docker.com/
 [swagger]: images/swagger.svg
 [swagger-url]:https://swagger.io/
 [postman]: images/postman.svg
 [postman-url]:https://www.postman.com/
-[github]: images/github.svg
+[github]: https://img.shields.io/badge/github%20-%23121011.svg?&style=for-the-badge&logo=github&logoColor=white
 [github-url]:https://github.com/
 [hibernate]: images/hibernate.svg
 [hibernate-url]:https://hibernate.org/
