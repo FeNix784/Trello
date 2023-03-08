@@ -1,10 +1,4 @@
-# Трелло
 
-
-
-# trello
-
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a name="readme-top"></a>
 <!--
 *** Thanks for checking out the Best-README-Template. If you have a suggestion
@@ -24,12 +18,7 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+
 
 
 
@@ -52,13 +41,13 @@
     ·
     <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
-  </p> -->
+    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>-->
+  </p> 
 </div>
 
 
 
-<!-- TABLE OF CONTENTS -->
+<!-- TABLE OF CONTENTS 
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -83,13 +72,15 @@
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
+-->
 
 
+<!-- ABOUT THE PROJECT 
 
-<!-- ABOUT THE PROJECT -->
-## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][product-screenshot]](https://example.com)-->
+
+## О проекте
 
 Данный проект представляет собой программную реализацию системы, которая осуществялет гибкое управление проектами путем командного взаимодействия.
 
@@ -112,14 +103,16 @@ Use the `QUICKSTART_README.md` to get started.
 
 В данном проекте использовались следующие технологии:
 
-<!-- * [![Next][Next.js]][Next-url] -->
-* [![React][React.js]][React-url]
+<!-- * [![Next][Next.js]][Next-url] 
 * [![Vue][Vue.js]][Vue-url]
-<!-- * [![Angular][Angular.io]][Angular-url]
+* [![Angular][Angular.io]][Angular-url]
 * [![Svelte][Svelte.dev]][Svelte-url]
 * [![Laravel][Laravel.com]][Laravel-url]
 * [![Bootstrap][Bootstrap.com]][Bootstrap-url]
 * [![JQuery][JQuery.com]][JQuery-url] -->
+
+
+* [![React][React.js]][React-url]
 * [![Java][Java]][Java-url]
 * [![Quarkus][Quarkus]][Quarkus-url]
 * [![PostgreSQL][PostgreSQL]][PostgreSQL-url]
@@ -142,51 +135,59 @@ Use the `QUICKSTART_README.md` to get started.
 
 <!-- GETTING STARTED -->
 ## Быстрый старт
+Этот проект использует Quarkus, сверхзвуковой субатомный фреймворк Java. Если вы хотите узнать больше о Quarkus'е посетите их вебсайт https://quarkus.io/ .
 
 Чтобы запустить этот проект вам необходимо:
 
 ### Предустановочный процесс
 
-Создать изображение содержащее базу данных путем вызова указанной команды из папки с файлом `docker-compose.yml`
+1. Создать изображение содержащее базу данных путем вызова указанной команды из папки с файлом `docker-compose.yml`
 * npm
   ```sh
   docker-compose up --build
   ```
 
-### Запуск
-
-После запуска контейнера с базой данных PostgreSQL, необходимо запустить проект
-
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+2. Клонируйте репозиторий
    ```sh
-   git clone https://github.com/your_username_/Project-Name.git
+   git clone https://github.com/FeNix784/Trello.git
    ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+3. Введите свои настройки `application.properties`
+
+4. Соберите и запустите проект
+
+Вы можете запустить ваше приложение в режиме разработки, который поддерживает live-coding используя:
+
+```shell script
+./mvnw compile quarkus:dev
+```
+
+> **_Замечание:_**  Quarkus теперь поставляется с пользовательским интерфейсом разработчика, который доступен в режиме разработки только на http://localhost:8080/q/dev /.
+
+##№ Упаковка и запуск приложения
+
+Приложение может быть упаковано с помощью:
+
+```shell script
+./mvnw package
+```
+
+Это производит `quarkus-run.jar ` файл в каталоге `target/quarkus-app/`.
+
+Приложение теперь доступно для запуска с использованием `java -jar target/quarkus-app/quarkus-run.jar `.
+
 
 <p align="right">(<a href="#readme-top">↑ Наверх</a>)</p>
-
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
+Данный проект позволяет применить принципы гибкой разработки программного обеспечения и бережливого управления к различным процессам управления, в частности к разработке продуктов и управлению проектами.
 <p align="right">(<a href="#readme-top">↑ Наверх</a>)</p>
 
 
 
-<!-- ROADMAP -->
+<!-- ROADMAP 
 ## Roadmap
 
 - [x] Add Changelog
@@ -199,11 +200,11 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
 
-<p align="right">(<a href="#readme-top">↑ Наверх</a>)</p>
+<p align="right">(<a href="#readme-top">↑ Наверх</a>)</p>-->
 
 
 
-<!-- CONTRIBUTING -->
+<!-- CONTRIBUTING 
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
@@ -217,16 +218,16 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-<p align="right">(<a href="#readme-top">↑ Наверх</a>)</p>
+<p align="right">(<a href="#readme-top">↑ Наверх</a>)</p>-->
 
 
 
-<!-- LICENSE -->
+<!-- LICENSE 
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
-<p align="right">(<a href="#readme-top">↑ Наверх</a>)</p>
+<p align="right">(<a href="#readme-top">↑ Наверх</a>)</p>-->
 
 
 
@@ -245,7 +246,7 @@ Project Link: [https://github.com/FeNix784/Trello](https://github.com/FeNix784/T
 
 
 
-<!-- ACKNOWLEDGMENTS -->
+<!-- ACKNOWLEDGMENTS 
 ## Acknowledgments
 
 Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
@@ -259,7 +260,7 @@ Use this space to list resources you find helpful and would like to give credit 
 * [Font Awesome](https://fontawesome.com)
 * [React Icons](https://react-icons.github.io/react-icons/search)
 
-<p align="right">(<a href="#readme-top">↑ Наверх</a>)</p>
+<p align="right">(<a href="#readme-top">↑ Наверх</a>)</p>-->
 
 
 
@@ -319,87 +320,3 @@ Use this space to list resources you find helpful and would like to give credit 
 [hibernate]: images/hibernate.png
 [hibernate-url]:https://hibernate.org/
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
-
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
-
-## Running the application in dev mode
-
-You can run your application in dev mode that enables live coding using:
-
-```shell script
-./mvnw compile quarkus:dev
-```
-
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
-
-## Packaging and running the application
-
-The application can be packaged using:
-
-```shell script
-./mvnw package
-```
-
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Pnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Pnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/trello-1.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
-
-## Related Guides
-
-- Hibernate ORM ([guide](https://quarkus.io/guides/hibernate-orm)): Define your persistent model with Hibernate ORM and
-  JPA
-- RESTEasy Reactive ([guide](https://quarkus.io/guides/resteasy-reactive)): A JAX-RS implementation utilizing build time
-  processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions
-  that depend on it.
-- YAML Configuration ([guide](https://quarkus.io/guides/config#yaml)): Use YAML to configure your Quarkus application
-- JDBC Driver - PostgreSQL ([guide](https://quarkus.io/guides/datasource)): Connect to the PostgreSQL database via JDBC
-
-## Provided Code
-
-### YAML Config
-
-Configure your application with YAML
-
-[Related guide section...](https://quarkus.io/guides/config-reference#configuration-examples)
-
-The Quarkus application configuration is located in `src/main/resources/application.yml`.
-
-### Hibernate ORM
-
-Create your first JPA entity
-
-[Related guide section...](https://quarkus.io/guides/hibernate-orm)
-
-### RESTEasy Reactive
-
-Easily start your Reactive RESTful Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
