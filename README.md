@@ -37,7 +37,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/FeNix784/Trello">
-    <img src="images/logo.svg" alt="Logo" width="80" height="80">
+    <img src="images/logo.svg" alt="Logo" width="250" height="250">
   </a>
 
   <h3 align="center">Jirello</h3>
@@ -127,7 +127,7 @@ Use the `QUICKSTART_README.md` to get started.
 * [![YandexID][YandexID]][YandexID-url]
 * [![Lombok][Lombok]][Lombok-url]
 * [![GSON][GSON]][Gson-url]
-* [![H2][H2]]
+* [![H2][H2]][H2-url]
 * [![Docker][docker]][docker-url]
 * [![Swagger][swagger]][swagger-url]
 * [![Postman][postman]][postman-url]
@@ -307,6 +307,7 @@ Use this space to list resources you find helpful and would like to give credit 
 [PostgreSQL]: https://img.shields.io/badge/postgres-%23316192.svg?&style=for-the-badge&logo=postgresql&logoColor=white
 [PostgreSQL-url]:https://www.postgresql.org/
 [H2]: images/h2_logo.png
+[H2-url]: https://ru.wikipedia.org/wiki/H2
 [docker]: https://img.shields.io/badge/docker%20-%230db7ed.svg?&style=for-the-badge&logo=docker&logoColor=white
 [docker-url]:https://www.docker.com/
 [swagger]: images/swagger.png
