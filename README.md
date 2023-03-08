@@ -37,7 +37,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/FeNix784/Trello">
-    <img src="images/logo.svg" alt="Logo" width="250" height="250">
+    <img src="images/logo.png" alt="Logo" width="250" height="250">
   </a>
 
   <h3 align="center">Jirello</h3>
