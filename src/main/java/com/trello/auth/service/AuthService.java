@@ -26,16 +26,23 @@ public class AuthService {
         parameters.put("code", code);
         System.out.println(parameters);
         Map<String, String> response = AuthService.request("https://oauth.yandex.ru/token", "POST", parameters);
-        if (response == null) new ArrayList<>();
+
+        if (response == null) {
+            new ArrayList<>();
+        }
+
         return response;
     }
-    public Map<String, String> getIdentifiedInfoByToken(String token){
+    public Map<String, String> getIdentifiedInfoByToken(String token) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("format", "json");
         parameters.put("oauth_token", token);
         System.out.println(token);
         Map<String, String> response = AuthService.request("https://login.yandex.ru/info", "GET", parameters);
-        if (response==null || response.isEmpty()) return new HashMap<>();
+
+        if (response==null || response.isEmpty()) {
+            return new HashMap<>();
+        }
 
         response.replace("default_avatar_id","https://avatars.mds.yandex.net/get-yapic/"+response.get("default_avatar_id")+"/islands-retina-small");
         return response;
@@ -60,14 +67,18 @@ public class AuthService {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is));
             String line = rd.readLine();
             rd.close();
+
             return new ObjectMapper().readValue(line, HashMap.class);
+
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         } finally {
+
             if (connection != null) {
                 connection.disconnect();
             }
+
         }
     }
 }

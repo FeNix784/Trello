@@ -1,15 +1,12 @@
 package com.trello.auth.entity;
 
-import io.quarkus.agroal.DataSource;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import javax.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
 
 @Entity
-@DataSource("auth")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Account extends PanacheEntity {

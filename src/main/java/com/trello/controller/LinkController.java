@@ -14,7 +14,11 @@ public class LinkController {
     @GET
     public Response linkBoard(@PathParam("link") String link) {
         LinkEntity linkEntity = LinkEntity.find("link", link).firstResult();
-        if (linkEntity == null) return Response.status(Response.Status.NOT_FOUND).build();
+
+        if (linkEntity == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
         return Response.ok(linkEntity.board).build();
     }
 }
