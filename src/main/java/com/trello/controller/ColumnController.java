@@ -19,26 +19,33 @@ public class ColumnController {
 
     @POST
     @Transactional
-    public Response createColumn(ColumnEntity column,@QueryParam("userId") Long userId ,@QueryParam("boardId") Long boardId){
+    public Response createColumn(ColumnEntity column,
+                                 @QueryParam("userId") Long userId ,
+                                 @QueryParam("boardId") Long boardId){
         ColumnEntity.persist(column);
+
         if (!BoardService.canChange(userId, boardId))
             return Response.status(Response.Status.BAD_REQUEST).build();
-        if (column.isPersistent()) {
-            BoardEntity board = BoardEntity.findById(boardId);
-            if (board == null) {
-                return Response.status(Response.Status.BAD_REQUEST).build();
-            }
-            column.position = board.columns.size() + 1;
-            board.columns.add(column);
-            return Response.ok(column).build();
+        if (!column.isPersistent()) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        return Response.status(Response.Status.BAD_REQUEST).build();
+
+        BoardEntity board = BoardEntity.findById(boardId);
+        if (board == null) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        column.position = board.columns.size() + 1;
+        board.columns.add(column);
+
+        return Response.ok(column).build();
     }
 
     @PUT
     @Transactional
     @Path("pos/{columnId}")
-    public Response updateColumnPosition(ColumnEntity columnFromRequest, @PathParam("columnId") Long columnId,
+    public Response updateColumnPosition(ColumnEntity columnFromRequest,
+                                 @PathParam("columnId") Long columnId,
                                  @QueryParam("userId") Long userId,
                                  @QueryParam("boardId") Long boardId) {
 
@@ -69,9 +76,14 @@ public class ColumnController {
     @GET
     @Transactional
     @Path("{columnId}")
-    public Response getColumnById(@PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if (!BoardService.canChange(userId, boardId))
+    public Response getColumnById(@PathParam("columnId") Long columnId,
+                                  @QueryParam("userId") Long userId,
+                                  @QueryParam("boardId") Long boardId) {
+
+        if (!BoardService.canChange(userId, boardId)){
             return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
         return ColumnEntity.findByIdOptional(columnId)
                 .map(column -> Response.ok(column).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).build());
@@ -80,25 +92,37 @@ public class ColumnController {
     @PUT
     @Transactional
     @Path("{columnId}")
-    public Response updateColumn(ColumnEntity column, @PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if (!BoardService.canChange(userId, boardId))
+    public Response updateColumn(ColumnEntity column,
+                                 @PathParam("columnId") Long columnId,
+                                 @QueryParam("userId") Long userId,
+                                 @QueryParam("boardId") Long boardId) {
+
+        if (!BoardService.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         ColumnEntity columnEntity = ColumnEntity.findById(columnId);
         if (columnEntity == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         columnEntity.title = column.title;
+
         return Response.ok(columnEntity).build();
     }
     
     @DELETE
     @Path("{columnId}")
     @Transactional
-    public Response deleteColumn(@PathParam("columnId") Long columnId, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
-        if (!BoardService.canChange(userId, boardId))
+    public Response deleteColumn(@PathParam("columnId") Long columnId,
+                                 @QueryParam("userId") Long userId,
+                                 @QueryParam("boardId") Long boardId) {
+        if (!BoardService.canChange(userId, boardId)){
             return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         BoardEntity board = BoardEntity.findById(boardId);
         board.columns.removeIf(columnEntity -> columnEntity.id.equals(columnId));
+
         return Response.ok(Response.Status.OK).build();
     }
 }
