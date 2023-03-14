@@ -83,7 +83,6 @@ public class UserControllerApiTest {
         int randomUserId = (int) (Math.random() * 3) + 3;
 
         given().when()
-                .when()
                 .delete(URL + "/" + randomUserId)
                 .then().log().all();
 
