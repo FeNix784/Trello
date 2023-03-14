@@ -4,11 +4,11 @@ insert into roleentity (id,role) values (0, 'CREATOR' );
 insert into roleentity (id,role) values (1, 'ADMIN' );
 insert into roleentity (id,role) values (2,'USER' );
 
-insert into userentity (id, email, name, surname)values (1, 'aaa@.ss','Тестовый аккаунт','первый');
-insert into userentity (id, email, name, surname)values (2, 'bbb@.ss','Тестовый аккаунт','второй');
-insert into userentity (id, email, name, surname)values (3, 'ccc@.ss','Тестовый аккаунт','третий');
-insert into userentity (id, email, name, surname)values (4, 'ddd@.ss','Тестовый аккаунт','четвертый');
-insert into userentity (id, email, name, surname)values (5, 'eee@.ss','Тестовый аккаунт','пятый');
+insert into userentity (id, email, name, surname)values (1, 'aaa@.ss','Тестовый аккаунт','1');
+insert into userentity (id, email, name, surname)values (2, 'bbb@.ss','Тестовый аккаунт','2');
+insert into userentity (id, email, name, surname)values (3, 'ccc@.ss','Тестовый аккаунт','3');
+insert into userentity (id, email, name, surname)values (4, 'ddd@.ss','Тестовый аккаунт','4');
+insert into userentity (id, email, name, surname)values (5, 'eee@.ss','Тестовый аккаунт','5');
 
 insert into boardentity (id,title) values (6,'board1');
 insert into boardentity (id,title) values (7,'board2');
@@ -40,11 +40,11 @@ insert into columnentity(id, position, title) values (28,3,'board4 –– column
 insert into columnentity(id, position, title) values (29,4,'board4 –– column 4');
 insert into columnentity(id, position, title) values (30,5,'board4 –– column 5');
 
-insert into columnentity(id, position, title) values (31,1,'board1 –– column 1');
-insert into columnentity(id, position, title) values (32,2,'board1 –– column 2');
-insert into columnentity(id, position, title) values (33,3,'board1 –– column 3');
-insert into columnentity(id, position, title) values (34,4,'board1 –– column 4');
-insert into columnentity(id, position, title) values (35,5,'board1 –– column 5');
+insert into columnentity(id, position, title) values (31,1,'board5 –– column 1');
+insert into columnentity(id, position, title) values (32,2,'board5 –– column 2');
+insert into columnentity(id, position, title) values (33,3,'board5 –– column 3');
+insert into columnentity(id, position, title) values (34,4,'board5 –– column 4');
+insert into columnentity(id, position, title) values (35,5,'board5 –– column 5');
 
 insert into boardentity_roleentity(boardentity_id, usersroles_id, usersroles_key) values (6, 0, 1);
 insert into boardentity_roleentity(boardentity_id, usersroles_id, usersroles_key) values (7, 0, 1);
