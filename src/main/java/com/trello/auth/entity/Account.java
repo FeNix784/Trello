@@ -10,12 +10,13 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Account extends PanacheEntity {
+
+
     @Column(unique = true)
     public String email;
     public String token;
-    public Long id;
-//    public Long tokenIssuance;
-//    public Long tokenLifeTime;
+
+    public Long yandexID;
 
 
 }

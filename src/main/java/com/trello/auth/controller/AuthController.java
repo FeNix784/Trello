@@ -37,12 +37,16 @@ public class AuthController {
         Long id = Long.valueOf(userInfo.get("id"));
         System.out.println(userInfo);
         Account account = Account.find("id", id).firstResult();
-        System.out.println(account);
+
 
         if (account == null) {
-            Account.persist(new Account(userInfo.get("default_email"), token, id));
+            account = new Account();
+            account.email = userInfo.get("default_email");
+            account.token = token;
+            account.yandexID = id;
+            Account.persist(account);
             UserEntity.persist(new UserEntity(userInfo.get("default_email"), userInfo.get("first_name"), userInfo.get("last_name"), userInfo.get("default_avatar_id"),id));
-            return Response.ok(UserEntity.find("email", userInfo.get("default_email")).firstResult()).build();
+            return Response.ok(UserEntity.find("yandexID",id).firstResult()).build();
         }
 
         account.token = token;
