@@ -1,9 +1,8 @@
 package com.trello.controller;
 
-import com.trello.entity.LinkEntity;
-import com.trello.entity.RoleEntity;
-import com.trello.entity.UserEntity;
+import com.trello.entity.*;
 
+import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -13,7 +12,8 @@ import javax.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 public class LinkController {
 
-    @GET
+    @PUT
+    @Transactional
     public Response linkBoard(@PathParam("link") String link, @QueryParam("userId") Long userId) {
         LinkEntity linkEntity = LinkEntity.find("link", link).firstResult();
 
@@ -21,8 +21,12 @@ public class LinkController {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        linkEntity.board.usersRoles.put(UserEntity.findById(userId), RoleEntity.findById(1));
+        BoardEntity board = linkEntity.board;
+        UserEntity user = UserEntity.findById(userId);
+        RoleEntity role = RoleEntity.findById(1L);
 
-        return Response.ok(linkEntity.board).build();
+        board.usersRoles.put(user, role);
+
+        return Response.ok().build();
     }
 }
