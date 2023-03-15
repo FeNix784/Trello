@@ -1,4 +1,3 @@
-grant all privileges on table * to test;
 
 insert into roleentity (id,role) values (0, 'CREATOR' );
 insert into roleentity (id,role) values (1, 'ADMIN' );
