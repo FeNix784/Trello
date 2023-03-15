@@ -15,5 +15,6 @@ public class LinkEntity extends PanacheEntity {
     public String link;
 
     @ManyToOne
+
     public BoardEntity board;
 }

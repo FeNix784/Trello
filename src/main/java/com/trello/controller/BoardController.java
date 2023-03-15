@@ -75,7 +75,7 @@ public class BoardController {
 
         LinkEntity link = new LinkEntity(shortId, BoardEntity.findById(boardId));
         LinkEntity.persist(link);
-        return Response.ok(link).build();
+        return Response.ok(shortId).build();
     }
 
     @GET

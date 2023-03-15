@@ -36,7 +36,7 @@ public class AuthController {
         Map<String, String> userInfo = authService.getIdentifiedInfoByToken(token);
         Long id = Long.valueOf(userInfo.get("id"));
         System.out.println(userInfo);
-        Account account = Account.find("id", id).firstResult();
+        Account account = Account.find("yandexid", id).firstResult();
 
 
         if (account == null) {
