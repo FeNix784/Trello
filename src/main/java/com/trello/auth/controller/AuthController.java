@@ -29,18 +29,24 @@ public class AuthController {
         AuthService authService = new AuthService(clientId, clientSecret);
 
         Map<String,String> tokenParams = authService.getTokenParametersByCode(code);
+        System.out.println(tokenParams);
         String token = tokenParams.get("access_token");
-        Long id = Long.valueOf(tokenParams.get("id"));
 
 
         Map<String, String> userInfo = authService.getIdentifiedInfoByToken(token);
+        Long id = Long.valueOf(userInfo.get("id"));
+        System.out.println(userInfo);
         Account account = Account.find("id", id).firstResult();
-        //TODO: 1) Удаление истекших аккаунтов
-        //TODO: 2) Изменение данных пользователя
+
+
         if (account == null) {
-            Account.persist(new Account(userInfo.get("default_email"), token, id));
+            account = new Account();
+            account.email = userInfo.get("default_email");
+            account.token = token;
+            account.yandexID = id;
+            Account.persist(account);
             UserEntity.persist(new UserEntity(userInfo.get("default_email"), userInfo.get("first_name"), userInfo.get("last_name"), userInfo.get("default_avatar_id"),id));
-            return Response.ok(UserEntity.find("email", userInfo.get("default_email")).firstResult()).build();
+            return Response.ok(UserEntity.find("yandexID",id).firstResult()).build();
         }
 
         account.token = token;

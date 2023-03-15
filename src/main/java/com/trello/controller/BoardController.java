@@ -7,6 +7,7 @@ import com.trello.entity.UserEntity;
 import com.trello.entity.service.BoardService;
 import com.trello.records.BoardWithUsers;
 import com.trello.records.BoardsTitlesRecord;
+import com.trello.statistic.entity.StatisticEntity;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -48,7 +49,7 @@ public class BoardController {
     @GET
     @Path("{boardId}")
     public Response getBoardById(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId) {
-        BoardEntity board =  BoardEntity.findById(boardId);
+        BoardEntity board = BoardEntity.findById(boardId);
         BoardWithUsers boardWithUsers = new BoardWithUsers(board.id, board.title, board.columns, board.tags, board.usersRoles);
 
         if (!BoardService.isMember(userId, boardId)) {
@@ -94,7 +95,7 @@ public class BoardController {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        if (!BoardService.canChange(userId,boardId)) {
+        if (!BoardService.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -106,19 +107,15 @@ public class BoardController {
     @Path("{boardId}/invite")
     @Transactional
     public Response addUser(@PathParam("boardId") Long boardId, @QueryParam("userId") Long userId, @QueryParam("role") Long role) {
+
         if (BoardService.isMember(userId, boardId)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
         BoardEntity board = BoardEntity.findById(boardId);
-
-        if (board == null) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-
         UserEntity user = UserEntity.findById(userId);
 
-        if (user == null) {
+        if (board == null || user == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -138,6 +135,8 @@ public class BoardController {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
+        StatisticEntity.delete("board_id", boardId);
+
         return Response.ok(Response.Status.OK).build();
     }
 
@@ -153,7 +152,7 @@ public class BoardController {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        BoardEntity board =BoardEntity.findById(boardId);
+        BoardEntity board = BoardEntity.findById(boardId);
         UserEntity user = UserEntity.findById(deleteUserId);
         board.usersRoles.remove(user);
         return Response.ok(Response.Status.OK).build();

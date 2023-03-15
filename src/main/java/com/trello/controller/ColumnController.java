@@ -4,6 +4,7 @@ package com.trello.controller;
 import com.trello.entity.BoardEntity;
 import com.trello.entity.ColumnEntity;
 import com.trello.entity.service.BoardService;
+import com.trello.statistic.entity.StatisticEntity;
 
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -19,21 +20,19 @@ public class ColumnController {
 
     @POST
     @Transactional
-    public Response createColumn(ColumnEntity column,
-                                 @QueryParam("userId") Long userId ,
-                                 @QueryParam("boardId") Long boardId){
+    public Response createColumn(ColumnEntity column, @QueryParam("userId") Long userId, @QueryParam("boardId") Long boardId) {
+
         ColumnEntity.persist(column);
 
-        if (!BoardService.canChange(userId, boardId))
-            return Response.status(Response.Status.BAD_REQUEST).build();
         if (!column.isPersistent()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        BoardEntity board = BoardEntity.findById(boardId);
-        if (board == null) {
+        if (!BoardService.canChange(userId, boardId)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
+
+        BoardEntity board = BoardEntity.findById(boardId);
 
         column.position = board.columns.size() + 1;
         board.columns.add(column);
@@ -52,16 +51,19 @@ public class ColumnController {
         ColumnEntity columnFromColumnId = ColumnEntity.findById(columnId);
         BoardEntity board = BoardEntity.findById(boardId);
 
-        if(!BoardService.canChange(userId,boardId)){
+        if (!BoardService.canChange(userId, boardId)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
+
         if (columnFromRequest == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        if(!ColumnEntity.canReplacePosition(columnId,boardId)){
+
+        if (!ColumnEntity.canReplacePosition(columnId, boardId)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        if(columnFromRequest.position < 1 || columnFromRequest.position > board.columns.size()){
+
+        if (columnFromRequest.position < 1 || columnFromRequest.position > board.columns.size()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -102,14 +104,16 @@ public class ColumnController {
         }
 
         ColumnEntity columnEntity = ColumnEntity.findById(columnId);
+
         if (columnEntity == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
         columnEntity.title = column.title;
 
         return Response.ok(columnEntity).build();
     }
-    
+
     @DELETE
     @Path("{columnId}")
     @Transactional
@@ -122,6 +126,8 @@ public class ColumnController {
 
         BoardEntity board = BoardEntity.findById(boardId);
         board.columns.removeIf(columnEntity -> columnEntity.id.equals(columnId));
+        
+        StatisticEntity.delete("column_id", columnId);
 
         return Response.ok(Response.Status.OK).build();
     }

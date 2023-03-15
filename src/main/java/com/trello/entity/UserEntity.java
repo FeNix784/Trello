@@ -12,7 +12,7 @@ import javax.persistence.Entity;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
+
 public class UserEntity extends PanacheEntity {
 
     @Column(unique = true)
