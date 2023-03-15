@@ -15,6 +15,7 @@ public class ColumnEntity extends PanacheEntity {
     public Integer position;
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("position")
     public Set<TaskEntity> tasks = new HashSet<>();
 
     public static boolean canReplacePosition(Long columnId, Long boardId){
