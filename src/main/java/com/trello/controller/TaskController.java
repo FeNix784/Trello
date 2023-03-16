@@ -108,8 +108,9 @@ public class TaskController {
             return  Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        column.tasks.removeIf(taskEntity -> taskEntity.id.equals(taskId));
         StatisticEntity.delete("task_id",taskId);
+        column.tasks.removeIf(taskEntity -> taskEntity.id.equals(taskId));
+
         TaskEntity.deleteById(taskId);
 
         return Response.ok(column).build();

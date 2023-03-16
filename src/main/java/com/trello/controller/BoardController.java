@@ -131,11 +131,12 @@ public class BoardController {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
+        StatisticEntity.delete("board_id", boardId);
+
         if (!BoardEntity.deleteById(boardId)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        StatisticEntity.delete("board_id", boardId);
 
         return Response.ok(Response.Status.OK).build();
     }

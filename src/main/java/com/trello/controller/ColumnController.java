@@ -124,10 +124,11 @@ public class ColumnController {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
+        StatisticEntity.delete("column_id", columnId);
         BoardEntity board = BoardEntity.findById(boardId);
         board.columns.removeIf(columnEntity -> columnEntity.id.equals(columnId));
         
-        StatisticEntity.delete("column_id", columnId);
+
 
         return Response.ok(Response.Status.OK).build();
     }
