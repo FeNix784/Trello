@@ -1,6 +1,14 @@
-insert into roleentity (id,role) values (0, 'CREATOR' );
-insert into roleentity (id,role) values (1, 'ADMIN' );
-insert into roleentity (id,role) values (2,'USER' );
+insert into roleentity (id, role)
+values (0, 'CREATOR');
+insert into roleentity (id, role)
+values (1, 'ADMIN');
+insert into roleentity (id, role)
+values (2, 'USER');
+
+insert into userentity (id, avatar, email, name, surname)
+values (1,
+        'https://sun9-31.userapi.com/impg/isjEmyfk5Q2x-oPznsh5pDiktKy8WXSCzKYwfw/cejg6hJfz5A.jpg?size=736x736&quality=95&sign=f9c18865eed5d6aa2182344ee6248cbd&type=album',
+        'eee@.ss', 'Avilio', 'Bruno');
 --
 -- insert into userentity (id, email, name, surname)values (1, 'eee@.ss','Никита','Литвинков');
 -- insert into userentity (id,  email, name, surname)values (2, 'ee2e@.ss', 'Папаша','Карло');
@@ -265,8 +273,6 @@ insert into roleentity (id,role) values (2,'USER' );
 --
 -- insert into taskentity_tagentity(taskentity_id, tags_id) VALUES (73,119);
 -- insert into taskentity_tagentity(taskentity_id, tags_id) VALUES (73,120);
-
-
 
 
 -- This file allow to write SQL commands that will be emitted in test and dev.
